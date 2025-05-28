@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
+import { IS_PUBLIC_KEY } from './public.decorator'; // Import the key
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
@@ -18,10 +19,15 @@ export class JwtAuthGuard implements CanActivate {
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     // 1) allow @Public() routes
     const isPublic = this.reflector.get<boolean>(
-      'isPublic',
+      IS_PUBLIC_KEY, // Use the imported key
       ctx.getHandler(),
     );
-    if (isPublic) return true;
+    console.log(`[JwtAuthGuard Debug] Request to ${ctx.getHandler().name} isPublic: ${isPublic}`); // Added log
+
+    if (isPublic) {
+      console.log(`[JwtAuthGuard Debug] Skipping auth for public route: ${ctx.getHandler().name}`); // Added log
+      return true;
+    }
 
     const req = ctx.switchToHttp().getRequest();
     const cookies = req.cookies || {};
@@ -39,6 +45,7 @@ export class JwtAuthGuard implements CanActivate {
     }
 
     if (!token) {
+      console.log(`[JwtAuthGuard Debug] No token found for non-public route: ${ctx.getHandler().name}`); // Added log
       throw new UnauthorizedException('No authentication token');
     }
 
@@ -46,8 +53,10 @@ export class JwtAuthGuard implements CanActivate {
     try {
       const payload = this.jwtService.verify(token);
       req.user = payload;
+      console.log(`[JwtAuthGuard Debug] Token verified for ${ctx.getHandler().name}`); // Added log
       return true;
     } catch (err) {
+      console.error(`[JwtAuthGuard Debug] Token verification failed for ${ctx.getHandler().name}: ${err.message}`); // Added log
       throw new UnauthorizedException('Invalid or expired token');
     }
   }
