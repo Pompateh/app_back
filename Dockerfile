@@ -18,7 +18,8 @@ RUN npm ci
 COPY . .
 
 # Build the application
-RUN npm run build
+RUN npm run prebuild && \
+    ./node_modules/.bin/tsc
 
 # Production stage
 FROM node:18-alpine
