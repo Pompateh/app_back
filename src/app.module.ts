@@ -27,11 +27,23 @@ import { AppService } from './app.service';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
-        const uri = configService.get<string>('DATABASE_URL');
-        console.log(`[MongooseModule] Attempting to connect with URI: ${uri}`);
+        // Try getting the URI directly from process.env as a fallback/check
+        const uriFromProcessEnv = process.env.DATABASE_URL;
+        const uriFromConfigService = configService.get<string>('DATABASE_URL');
+
+        console.log(`[MongooseModule Debug] URI from process.env: ${uriFromProcessEnv}`);
+        console.log(`[MongooseModule Debug] URI from ConfigService: ${uriFromConfigService}`);
+
+        const uri = uriFromConfigService || uriFromProcessEnv; // Prefer ConfigService, fallback to process.env
+
+        console.log(`[MongooseModule Debug] Final URI being used: ${uri}`);
+
         if (!uri) {
-          console.error('[MongooseModule] DATABASE_URL is undefined!');
+          console.error('[MongooseModule Debug] Final DATABASE_URL is undefined or empty!');
+           // Potentially throw an error here to stop if URI is critical
+           // throw new Error('DATABASE_URL environment variable is not set.');
         }
+
         return {
           uri: uri,
           useNewUrlParser: true,
@@ -47,6 +59,12 @@ import { AppService } from './app.service';
     ShopModule,
     CartModule,
     NotificationModule,
+    HealthModule,
+    AssetModule,
+    SettingModule,
+    OrderModule,
+    NewsletterModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [
