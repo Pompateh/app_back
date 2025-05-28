@@ -53,5 +53,8 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV CORS_ORIGIN=https://wearenewstalgiaa.netlify.app
 
+# Debug: Print DATABASE_URL to check if it's set
+RUN echo "DEBUG: DATABASE_URL is: $DATABASE_URL"
+
 # Start the application
 CMD ["npm", "run", "start:prod"]
