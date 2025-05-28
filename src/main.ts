@@ -1,9 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import cookieParser from 'cookie-parser';
-import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
+// Using require for middleware compatibility
+const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { logger } from './common/logger/winston.logger';
 import { NestExpressApplication } from '@nestjs/platform-express';
