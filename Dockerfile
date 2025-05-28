@@ -16,6 +16,9 @@ RUN npm install
 # Copy source code
 COPY . .
 
+# Make sure the nest binary is executable
+RUN chmod +x ./node_modules/.bin/nest
+
 # Build the application
 RUN npm run build
 
