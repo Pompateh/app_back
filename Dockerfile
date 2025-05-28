@@ -9,15 +9,13 @@ RUN apk add --no-cache python3 make g++
 
 # Copy package files
 COPY package*.json ./
+COPY tsconfig*.json ./
 
 # Install ALL dependencies (including devDependencies)
-RUN npm install
+RUN npm ci
 
 # Copy source code
 COPY . .
-
-# Make sure the nest binary is executable
-RUN chmod +x ./node_modules/.bin/nest
 
 # Build the application
 RUN npm run build
@@ -31,7 +29,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install only production dependencies
-RUN npm install --only=production
+RUN npm ci --only=production
 
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
