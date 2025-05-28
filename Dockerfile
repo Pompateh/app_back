@@ -4,20 +4,25 @@ FROM node:18-alpine
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Install dependencies required for building
+RUN apk add --no-cache python3 make g++
+
+# Copy package files
 COPY package*.json ./
 
-# Install dependencies and NestJS CLI globally
-RUN npm install -g @nestjs/cli && \
-    npm install
+# Install dependencies
+RUN npm install
 
 # Copy the rest of the application code
 COPY . .
 
-# Build the application (if using TypeScript, this builds the dist folder)
+# Build the application
 RUN npm run build
 
-# Expose the port (ensure this matches your .env PORT)
+# Remove development dependencies
+RUN npm prune --production
+
+# Expose the port
 EXPOSE 3000
 
 # Define environment variable for production
