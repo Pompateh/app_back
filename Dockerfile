@@ -52,7 +52,6 @@ EXPOSE 3000
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV CORS_ORIGIN=https://wearenewstalgiaa.netlify.app
-ENV DATABASE_URL=${DATABASE_URL}
 
 # Start the application
 CMD ["npm", "run", "start:prod"]
