@@ -1,6 +1,7 @@
 import { AssetService } from './asset.service';
 export declare class AssetController {
     private readonly assetService;
+    private readonly logger;
     constructor(assetService: AssetService);
     uploadFile(file: Express.Multer.File, caption: string): Promise<{
         id: string;

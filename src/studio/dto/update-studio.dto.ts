@@ -20,6 +20,10 @@ export class UpdateStudioDto {
 
   @IsOptional()
   @IsString()
+  logo?: string;
+
+  @IsOptional()
+  @IsString()
   author?: string;
 
   @IsOptional()

@@ -15,6 +15,7 @@ class UpdateStudioDto {
     name;
     description;
     thumbnail;
+    logo;
     author;
     imageTitle;
     imageDescription;
@@ -42,6 +43,11 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateStudioDto.prototype, "thumbnail", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateStudioDto.prototype, "logo", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),

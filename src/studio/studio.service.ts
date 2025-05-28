@@ -51,6 +51,7 @@ export class StudioService {
           name: createStudioDto.name,
           description: createStudioDto.description,
           thumbnail: createStudioDto.thumbnail,
+          logo: createStudioDto.logo,
           author: createStudioDto.author,
           imageDescription: createStudioDto.imageDescription,
           imageTitle: createStudioDto.imageTitle, // Include imageTitle
@@ -77,6 +78,7 @@ export class StudioService {
           name: updateStudioDto.name,
           description: updateStudioDto.description,
           thumbnail: updateStudioDto.thumbnail,
+          logo: updateStudioDto.logo,
           author: updateStudioDto.author,
           imageTitle: updateStudioDto.imageTitle,
           imageDescription: updateStudioDto.imageDescription,

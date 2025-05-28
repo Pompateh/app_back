@@ -16,4 +16,9 @@ export class AppController {
   getFavicon() {
     return ''; // Or serve a real favicon if you have one
   }
+
+  @Get('api/health')
+  healthCheck() {
+    return { status: 'ok', timestamp: new Date().toISOString() };
+  }
 }

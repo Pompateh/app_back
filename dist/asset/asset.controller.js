@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var AssetController_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AssetController = void 0;
 const common_1 = require("@nestjs/common");
@@ -18,30 +19,55 @@ const platform_express_1 = require("@nestjs/platform-express");
 const asset_service_1 = require("./asset.service");
 const multer_1 = require("multer");
 const path_1 = require("path");
-let AssetController = class AssetController {
+let AssetController = AssetController_1 = class AssetController {
     assetService;
+    logger = new common_1.Logger(AssetController_1.name);
     constructor(assetService) {
         this.assetService = assetService;
     }
     async uploadFile(file, caption) {
-        if (!file) {
-            throw new common_1.BadRequestException('File is required');
+        try {
+            if (!file) {
+                throw new common_1.BadRequestException('File is required');
+            }
+            const asset = await this.assetService.createAsset({
+                url: `/uploads/${file.filename}`,
+                filename: file.filename,
+                caption,
+            });
+            return asset;
         }
-        const asset = await this.assetService.createAsset({
-            url: `/uploads/${file.filename}`,
-            filename: file.filename,
-            caption,
-        });
-        return asset;
+        catch (error) {
+            this.logger.error('Error uploading file', error.stack);
+            throw new common_1.InternalServerErrorException('Failed to upload file');
+        }
     }
     async getAssets() {
-        return this.assetService.findAll();
+        try {
+            return this.assetService.findAll();
+        }
+        catch (error) {
+            this.logger.error('Error fetching assets', error.stack);
+            throw new common_1.InternalServerErrorException('Failed to fetch assets');
+        }
     }
     async updateAsset(id, updateData) {
-        return this.assetService.updateAsset(id, updateData);
+        try {
+            return this.assetService.updateAsset(id, updateData);
+        }
+        catch (error) {
+            this.logger.error(`Error updating asset with id ${id}`, error.stack);
+            throw new common_1.InternalServerErrorException('Failed to update asset');
+        }
     }
     async deleteAsset(id) {
-        return this.assetService.removeAsset(id);
+        try {
+            return this.assetService.removeAsset(id);
+        }
+        catch (error) {
+            this.logger.error(`Error deleting asset with id ${id}`, error.stack);
+            throw new common_1.InternalServerErrorException('Failed to delete asset');
+        }
     }
 };
 exports.AssetController = AssetController;
@@ -84,7 +110,7 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], AssetController.prototype, "deleteAsset", null);
-exports.AssetController = AssetController = __decorate([
+exports.AssetController = AssetController = AssetController_1 = __decorate([
     (0, common_1.Controller)('assets'),
     __metadata("design:paramtypes", [asset_service_1.AssetService])
 ], AssetController);

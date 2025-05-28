@@ -24,6 +24,7 @@ async function bootstrap() {
         const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [
             'http://localhost:3000',
             'http://localhost:3001',
+            'https://02aa-2402-800-62a8-9538-31c1-4055-60db-4fa6.ngrok-free.app',
         ];
         app.enableCors({
             origin: (origin, callback) => {
@@ -34,6 +35,7 @@ async function bootstrap() {
                     callback(new Error(`Origin ${origin} not allowed by CORS`));
                 }
             },
+            methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
             credentials: true,
         });
         app.useGlobalGuards(new jwt_auth_guard_1.JwtAuthGuard(reflector, jwtService));

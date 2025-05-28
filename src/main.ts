@@ -20,33 +20,39 @@ async function bootstrap() {
 
     // Serve static assets
     app.useStaticAssets(join(__dirname, '..', 'public'));
+
     // Security middleware
     app.use(helmet());
+
     // Cookie parser middleware
     app.use(cookieParser());
+
     // Trust the first proxy
     app.set('trust proxy', 1);
 
-    // Configure CORS
+    // ─── CORS CONFIGURATION ────────────────────────────────────────
     const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [
-      'http://localhost:3000',  // your Next.js dev server
-      'http://localhost:3001',  // keep this if you still need it
+      'http://localhost:3000',  // Your front-end dev server
+      'http://localhost:3001',  // (Optional) if you ever access API directly
+      'https://02aa-2402-800-62a8-9538-31c1-4055-60db-4fa6.ngrok-free.app', // Your ngrok URL
     ];
     app.enableCors({
       origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
           callback(null, true); // Allow the request
         } else {
-          callback(new Error(`Origin ${origin} not allowed by CORS`)); // Block the request
+          callback(new Error(`Origin ${origin} not allowed by CORS`)); // Block it
         }
       },
-      credentials: true, // Allow cookies and credentials
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+      credentials: true, // Allow cookies/credentials
     });
+    // ────────────────────────────────────────────────────────────────
 
-    // Global guards
+    // Global JWT auth guard
     app.useGlobalGuards(new JwtAuthGuard(reflector, jwtService));
 
-    // Global Validation: whitelist and forbid non-whitelisted properties
+    // Global validation pipe
     app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
@@ -55,18 +61,18 @@ async function bootstrap() {
       }),
     );
 
-    // Rate limiting to prevent abuse
+    // Rate limiting
     app.use(
       rateLimit({
         windowMs: 15 * 60 * 1000, // 15 minutes
-        max: 100, // limit each IP to 100 requests per windowMs
+        max: 100,                 // limit each IP
       }),
     );
 
-    // Global Exception Filter for consistent error responses
+    // Global exception filter
     app.useGlobalFilters(new AllExceptionsFilter());
 
-    // Set up logger (using Winston)
+    // Winston logger
     app.useLogger(logger);
 
     const port = process.env.PORT || 3001;
@@ -76,4 +82,5 @@ async function bootstrap() {
     console.error('Error starting the application:', error);
   }
 }
+
 bootstrap();

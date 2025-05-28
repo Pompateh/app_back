@@ -3,6 +3,7 @@ export declare class UpdateStudioDto {
     name?: string;
     description?: string;
     thumbnail?: string;
+    logo?: string;
     author?: string;
     imageTitle?: string;
     imageDescription?: string;

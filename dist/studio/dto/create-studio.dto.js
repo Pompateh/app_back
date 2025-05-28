@@ -113,6 +113,7 @@ class CreateStudioDto {
     name;
     description;
     thumbnail;
+    logo;
     author;
     imageDescription;
     imageTitle;
@@ -139,6 +140,11 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateStudioDto.prototype, "thumbnail", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateStudioDto.prototype, "logo", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),

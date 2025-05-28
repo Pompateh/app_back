@@ -12,6 +12,7 @@ model Studio {
   name             String
   description      String?
   thumbnail        String?
+  logo             String?
   author           String?
   imageTitle       String?
   imageDescription String?

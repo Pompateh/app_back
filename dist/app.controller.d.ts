@@ -4,4 +4,8 @@ export declare class AppController {
     constructor(appService: AppService);
     getHello(): string;
     getFavicon(): string;
+    healthCheck(): {
+        status: string;
+        timestamp: string;
+    };
 }

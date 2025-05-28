@@ -74,6 +74,10 @@ export class CreateStudioDto {
 
   @IsString()
   @IsOptional()
+  logo?: string;
+
+  @IsString()
+  @IsOptional()
   author?: string;
 
   @IsString()

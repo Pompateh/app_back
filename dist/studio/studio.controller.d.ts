@@ -15,6 +15,7 @@ export declare class StudioController {
         author: string | null;
         description: string | null;
         thumbnail: string | null;
+        logo: string | null;
         imageDescription: string | null;
         imageTitle: string | null;
         openDays: string[];

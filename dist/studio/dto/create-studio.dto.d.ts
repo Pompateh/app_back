@@ -27,6 +27,7 @@ export declare class CreateStudioDto {
     name: string;
     description?: string;
     thumbnail?: string;
+    logo?: string;
     author?: string;
     imageDescription?: string;
     imageTitle?: string;
