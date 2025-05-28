@@ -11,11 +11,18 @@ import { join } from 'path';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const reflector = app.get(Reflector);
   const jwtService = app.get(JwtService);
+  const configService = app.get(ConfigService);
+
+  // Log the DATABASE_URL to check if it's being read
+  const dbUrl = configService.get<string>('DATABASE_URL');
+  console.log(`DATABASE_URL from ConfigService: ${dbUrl}`);
+  console.log(`DATABASE_URL from process.env: ${process.env.DATABASE_URL}`);
 
   // Serve static assets
   app.useStaticAssets(join(__dirname, '..', 'public'));
