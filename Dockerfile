@@ -4,6 +4,9 @@ FROM node:18-alpine AS builder
 # Set working directory
 WORKDIR /app
 
+# Install build dependencies
+RUN apk add --no-cache python3 make g++
+
 # Copy package files
 COPY package*.json ./
 COPY tsconfig*.json ./
@@ -25,6 +28,9 @@ RUN npm run build
 FROM node:18-alpine
 
 WORKDIR /app
+
+# Install production dependencies
+RUN apk add --no-cache python3 make g++
 
 # Copy package files and Prisma schema
 COPY package*.json ./
