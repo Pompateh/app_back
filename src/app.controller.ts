@@ -13,11 +13,13 @@ export class AppController {
   }
 
   @Get('favicon.ico')
+  @Public()
   getFavicon() {
     return ''; // Or serve a real favicon if you have one
   }
 
   @Get('api/health')
+  @Public()
   healthCheck() {
     return { status: 'ok', timestamp: new Date().toISOString() };
   }
