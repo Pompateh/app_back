@@ -26,11 +26,18 @@ import { AppService } from './app.service';
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('DATABASE_URL'),
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const uri = configService.get<string>('DATABASE_URL');
+        console.log(`[MongooseModule] Attempting to connect with URI: ${uri}`);
+        if (!uri) {
+          console.error('[MongooseModule] DATABASE_URL is undefined!');
+        }
+        return {
+          uri: uri,
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+        };
+      },
       inject: [ConfigService],
     }),
     AuthModule,
