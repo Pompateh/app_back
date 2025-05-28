@@ -1,31 +1,42 @@
-# Use an official Node.js runtime as a parent image
-FROM node:18-alpine
+# Build stage
+FROM node:18-alpine AS builder
 
 # Set working directory
 WORKDIR /app
 
-# Install dependencies required for building
+# Install build dependencies
 RUN apk add --no-cache python3 make g++
 
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
+# Install ALL dependencies (including devDependencies)
 RUN npm install
 
-# Copy the rest of the application code
+# Copy source code
 COPY . .
 
 # Build the application
 RUN npm run build
 
-# Remove development dependencies
-RUN npm prune --production
+# Production stage
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install only production dependencies
+RUN npm install --only=production
+
+# Copy built application from builder stage
+COPY --from=builder /app/dist ./dist
 
 # Expose the port
 EXPOSE 3000
 
-# Define environment variable for production
+# Set production environment
 ENV NODE_ENV=production
 
 # Start the application
