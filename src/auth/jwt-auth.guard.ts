@@ -17,7 +17,19 @@ export class JwtAuthGuard implements CanActivate {
   ) {}
 
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
-    // 1) allow @Public() routes
+    const request = ctx.switchToHttp().getRequest();
+    const path = request.url; // Get the request path
+
+    // Debugging log for the path
+    console.log(`[JwtAuthGuard Debug] Request path: ${path}`);
+
+    // 1) Explicitly allow /api/health for health checks
+    if (path === '/api/health') {
+      console.log(`[JwtAuthGuard Debug] Skipping auth for health check path: ${path}`);
+      return true;
+    }
+
+    // 2) Allow @Public() routes (fallback check)
     const isPublic = this.reflector.get<boolean>(
       IS_PUBLIC_KEY, // Use the imported key
       ctx.getHandler(),
@@ -25,7 +37,7 @@ export class JwtAuthGuard implements CanActivate {
     console.log(`[JwtAuthGuard Debug] Request to ${ctx.getHandler().name} isPublic: ${isPublic}`); // Added log
 
     if (isPublic) {
-      console.log(`[JwtAuthGuard Debug] Skipping auth for public route: ${ctx.getHandler().name}`); // Added log
+      console.log(`[JwtAuthGuard Debug] Skipping auth for public route (decorator): ${ctx.getHandler().name}`); // Modified log
       return true;
     }
 
@@ -33,7 +45,7 @@ export class JwtAuthGuard implements CanActivate {
     const cookies = req.cookies || {};
     const authHeader = req.headers.authorization as string;
 
-    // 2) extract token from cookie OR header
+    // 3) extract token from cookie OR header
     let token: string | undefined;
     if (cookies.token) {
       token = cookies.token;
@@ -49,7 +61,7 @@ export class JwtAuthGuard implements CanActivate {
       throw new UnauthorizedException('No authentication token');
     }
 
-    // 3) verify and attach payload
+    // 4) verify and attach payload
     try {
       const payload = this.jwtService.verify(token);
       req.user = payload;
