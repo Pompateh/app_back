@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -42,6 +43,7 @@
     "quill": "^2.0.3",
     "react-quill": "^2.0.0",
     "reflect-metadata": "^0.2.2",
+    "rimraf": "^5.0.5",
     "rxjs": "^7.8.1",
     "slugify": "^1.6.6",
     "winston": "^3.17.0"

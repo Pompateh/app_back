@@ -1,14 +1,14 @@
 # Use an official Node.js runtime as a parent image
-FROM node:16-alpine
+FROM node:18-alpine
 
 # Set working directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install --production
+RUN npm install
 
 # Copy the rest of the application code
 COPY . .
@@ -17,7 +17,7 @@ COPY . .
 RUN npm run build
 
 # Expose the port (ensure this matches your .env PORT)
-EXPOSE 3001
+EXPOSE 3000
 
 # Define environment variable for production
 ENV NODE_ENV=production
