@@ -7,9 +7,13 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 COPY tsconfig*.json ./
+COPY prisma ./prisma/
 
 # Install dependencies
 RUN npm install
+
+# Generate Prisma Client
+RUN npx prisma generate
 
 # Copy source code
 COPY . .
@@ -22,11 +26,15 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copy package files
+# Copy package files and Prisma schema
 COPY package*.json ./
+COPY prisma ./prisma/
 
 # Install production dependencies
 RUN npm install --production
+
+# Generate Prisma Client
+RUN npx prisma generate
 
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
