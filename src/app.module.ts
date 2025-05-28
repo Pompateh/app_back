@@ -21,33 +21,29 @@ import { AppService } from './app.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }), // Load environment variables globally
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI'), // Load MONGODB_URI from .env
+        uri: configService.get<string>('DATABASE_URL'),
         useNewUrlParser: true,
         useUnifiedTopology: true,
       }),
       inject: [ConfigService],
     }),
     AuthModule,
-    StudioModule,
-    ProjectModule,
-    ShopModule,
-    OrderModule,
-    NewsletterModule,
-    UsersModule,
-    HealthModule,
-    AssetModule,
     PostModule,
-    SettingModule,
-    NotificationModule,
+    ProjectModule,
+    StudioModule,
+    ShopModule,
     CartModule,
+    NotificationModule,
   ],
-  controllers: [AppController], // Ensure AppController is included
+  controllers: [AppController],
   providers: [
-    AppService, // Ensure AppService is included
+    AppService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
