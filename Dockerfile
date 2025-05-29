@@ -50,11 +50,15 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV CORS_ORIGIN=https://wearenewstalgiaa.netlify.app
 
-# Debug: Print DATABASE_URL to check if it's set
-RUN echo "DEBUG: DATABASE_URL is: $DATABASE_URL"
+# Declare DATABASE_URL as a build argument
+ARG DATABASE_URL
 
-# Apply Prisma migrations
-RUN npx prisma migrate deploy
+# Debug: Print DATABASE_URL during build to check if it's set
+# Using ARG DATABASE_URL for the echo command context
+RUN echo "DEBUG (Build Arg): DATABASE_URL is: $DATABASE_URL"
+
+# Apply Prisma migrations, using the build argument
+RUN DATABASE_URL=$DATABASE_URL npx prisma migrate deploy
 
 # Start the application
 CMD ["npm", "run", "start:prod"]
