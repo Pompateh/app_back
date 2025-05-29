@@ -5,15 +5,24 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StudioService = void 0;
+console.log('studio.service.ts file started loading');
 const common_1 = require("@nestjs/common");
 const client_1 = require("@prisma/client");
 let StudioService = class StudioService {
+    constructor() {
+        console.log('StudioService constructor called');
+    }
     prisma = new client_1.PrismaClient();
     async findAll() {
         try {
+            console.log('Attempting to fetch studios from database...');
             const studios = await this.prisma.studio.findMany();
+            console.log('Successfully fetched studios.');
             const sanitizedStudios = studios.map((studio) => ({
                 ...studio,
                 openHours: studio.openHours || 'N/A',
@@ -22,7 +31,8 @@ let StudioService = class StudioService {
             return sanitizedStudios;
         }
         catch (error) {
-            console.error('Error in findAll:', error.message);
+            console.error('Error encountered in studioService.findAll');
+            console.error('Error message:', error.message);
             console.error('Stack Trace:', error.stack);
             throw new common_1.InternalServerErrorException('Failed to fetch studios');
         }
@@ -127,6 +137,7 @@ let StudioService = class StudioService {
 };
 exports.StudioService = StudioService;
 exports.StudioService = StudioService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [])
 ], StudioService);
 //# sourceMappingURL=studio.service.js.map
