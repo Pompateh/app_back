@@ -39,9 +39,6 @@ COPY prisma ./prisma/
 # Install production dependencies
 RUN npm install --production
 
-# Generate Prisma Client
-RUN npx prisma generate
-
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
 
@@ -55,6 +52,9 @@ ENV CORS_ORIGIN=https://wearenewstalgiaa.netlify.app
 
 # Debug: Print DATABASE_URL to check if it's set
 RUN echo "DEBUG: DATABASE_URL is: $DATABASE_URL"
+
+# Apply Prisma migrations
+RUN npx prisma migrate deploy
 
 # Start the application
 CMD ["npm", "run", "start:prod"]
