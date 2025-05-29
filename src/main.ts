@@ -33,7 +33,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       process.env.CORS_ORIGIN || 'http://localhost:3000',
-      'https://wearenewstalgiaa.netlify.app'
+      'https://bucolic-profiterole-ad1c11.netlify.app'
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
