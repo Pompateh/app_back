@@ -10,7 +10,9 @@ export class StudioService {
   // Fetch all studios
   async findAll(): Promise<any[]> {
     try {
+      console.log('Attempting to fetch studios from database...');
       const studios = await this.prisma.studio.findMany();
+      console.log('Successfully fetched studios.');
       
       // Provide default values for missing fields
       const sanitizedStudios = studios.map((studio) => ({
@@ -21,7 +23,8 @@ export class StudioService {
       console.log('Fetched Studios:', sanitizedStudios);
       return sanitizedStudios;
     } catch (error: any) {
-      console.error('Error in findAll:', error.message);
+      console.error('Error encountered in studioService.findAll');
+      console.error('Error message:', error.message);
       console.error('Stack Trace:', error.stack);
       throw new InternalServerErrorException('Failed to fetch studios');
     }
