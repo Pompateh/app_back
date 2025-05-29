@@ -23,8 +23,13 @@ async function bootstrap() {
     console.log(`DATABASE_URL from process.env: ${process.env.DATABASE_URL}`);
     app.useStaticAssets((0, path_1.join)(__dirname, '..', 'public'));
     app.enableCors({
-        origin: [process.env.CORS_ORIGIN || 'http://localhost:3000', 'https://wearenewstalgiaa.netlify.app'],
+        origin: [
+            process.env.CORS_ORIGIN || 'http://localhost:3000',
+            'https://bucolic-profiterole-ad1c11.netlify.app'
+        ],
         credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
     });
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,

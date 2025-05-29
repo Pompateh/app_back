@@ -5,14 +5,14 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 
 # Install build dependencies
-RUN apk add --no-cache python3 make g++
+RUN apk add --no-cache python3 make g++ git
 
 # Copy package files
 COPY package*.json ./
 COPY tsconfig*.json ./
 COPY prisma ./prisma/
 
-# Install dependencies
+# Install ALL dependencies (including devDependencies)
 RUN npm install
 
 # Generate Prisma Client
@@ -58,4 +58,4 @@ ARG DATABASE_URL
 RUN echo "DEBUG (Build Arg): DATABASE_URL is: $DATABASE_URL"
 
 # Start the application
-CMD ["npm", "run", "start:prod"]
+CMD ["/bin/sh", "-c", "npm run start:prod"]

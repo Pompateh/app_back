@@ -14,11 +14,15 @@ console.log('studio.service.ts file started loading');
 const common_1 = require("@nestjs/common");
 const client_1 = require("@prisma/client");
 let StudioService = class StudioService {
+    prisma;
     constructor() {
-        console.log('StudioService constructor called');
+        console.log('StudioService constructor called - BEFORE PrismaClient initialization');
+        this.prisma = new client_1.PrismaClient();
+        console.log('StudioService constructor called - AFTER PrismaClient initialization');
     }
-    prisma = new client_1.PrismaClient();
     async findAll() {
+        console.log('StudioService.findAll() called');
+        return [{ id: 'dummy-1', name: 'Dummy Studio', description: 'This is dummy data' }];
         try {
             console.log('Attempting to fetch studios from database...');
             const studios = await this.prisma.studio.findMany();
