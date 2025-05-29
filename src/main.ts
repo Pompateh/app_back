@@ -31,8 +31,13 @@ async function bootstrap() {
 
   // Enable CORS - Explicitly allow Netlify domain
   app.enableCors({
-    origin: [process.env.CORS_ORIGIN || 'http://localhost:3000', 'https://wearenewstalgiaa.netlify.app'], // Added Netlify domain
+    origin: [
+      process.env.CORS_ORIGIN || 'http://localhost:3000',
+      'https://wearenewstalgiaa.netlify.app'
+    ],
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   });
 
   // Global pipes
