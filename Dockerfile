@@ -57,8 +57,8 @@ ARG DATABASE_URL
 # Using ARG DATABASE_URL for the echo command context
 RUN echo "DEBUG (Build Arg): DATABASE_URL is: $DATABASE_URL"
 
-# Apply Prisma migrations, using the build argument
-RUN DATABASE_URL=$DATABASE_URL npx prisma migrate deploy
+# Apply Prisma migrations, redirecting stderr to stdout and adding a prefix
+RUN DATABASE_URL=$DATABASE_URL npx prisma migrate deploy 2>&1 | sed 's/^/[PRISMA-BUILD-LOG] /'
 
 # Start the application
 CMD ["npm", "run", "start:prod"]
