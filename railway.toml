@@ -1,6 +1,8 @@
 [build]
 builder = "nixpacks"
 buildCommand = "npm install && npm run build"
+# Pass DATABASE_URL environment variable as a build argument
+args = { DATABASE_URL = "${DATABASE_URL}" }
 
 [deploy]
 startCommand = "npm run start:prod"
