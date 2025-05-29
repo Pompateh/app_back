@@ -1,3 +1,5 @@
+console.log('studio.service.ts file started loading');
+
 import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { PrismaClient, Prisma, Studio } from '@prisma/client';
 import { CreateStudioDto } from './dto/create-studio.dto';
@@ -5,6 +7,10 @@ import { UpdateStudioDto } from './dto/update-studio.dto';
 
 @Injectable()
 export class StudioService {
+  constructor() {
+    console.log('StudioService constructor called');
+  }
+
   private readonly prisma = new PrismaClient();
 
   // Fetch all studios
