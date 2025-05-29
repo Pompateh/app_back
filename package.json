@@ -1,0 +1,14 @@
+{
+  "name": "studio-platform",
+  "version": "1.0.0",
+  "description": "Studio platform with API and web frontend",
+  "scripts": {
+    "start": "concurrently \"npm run start:api\" \"npm run start:web\"",
+    "start:api": "cd api && npm run start:dev",
+    "start:web": "cd web && npm run dev",
+    "install:all": "npm install && cd api && npm install && cd ../web && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+} 
