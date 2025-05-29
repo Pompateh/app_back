@@ -33,29 +33,42 @@ exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            config_1.ConfigModule.forRoot({ isGlobal: true }),
+            config_1.ConfigModule.forRoot({
+                isGlobal: true,
+            }),
             mongoose_1.MongooseModule.forRootAsync({
                 imports: [config_1.ConfigModule],
-                useFactory: async (configService) => ({
-                    uri: configService.get('MONGODB_URI'),
-                    useNewUrlParser: true,
-                    useUnifiedTopology: true,
-                }),
+                useFactory: async (configService) => {
+                    const uriFromProcessEnv = process.env.DATABASE_URL;
+                    const uriFromConfigService = configService.get('DATABASE_URL');
+                    console.log(`[MongooseModule Debug] URI from process.env: ${uriFromProcessEnv}`);
+                    console.log(`[MongooseModule Debug] URI from ConfigService: ${uriFromConfigService}`);
+                    const uri = uriFromConfigService || uriFromProcessEnv;
+                    console.log(`[MongooseModule Debug] Final URI being used: ${uri}`);
+                    if (!uri) {
+                        console.error('[MongooseModule Debug] Final DATABASE_URL is undefined or empty!');
+                    }
+                    return {
+                        uri: uri,
+                        useNewUrlParser: true,
+                        useUnifiedTopology: true,
+                    };
+                },
                 inject: [config_1.ConfigService],
             }),
             auth_module_1.AuthModule,
-            studio_module_1.StudioModule,
+            post_module_1.PostModule,
             project_module_1.ProjectModule,
+            studio_module_1.StudioModule,
             shop_module_1.ShopModule,
+            cart_module_1.CartModule,
+            notification_module_1.NotificationModule,
+            health_module_1.HealthModule,
+            asset_module_1.AssetModule,
+            setting_module_1.SettingModule,
             order_module_1.OrderModule,
             newsletter_module_1.NewsletterModule,
             users_module_1.UsersModule,
-            health_module_1.HealthModule,
-            asset_module_1.AssetModule,
-            post_module_1.PostModule,
-            setting_module_1.SettingModule,
-            notification_module_1.NotificationModule,
-            cart_module_1.CartModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

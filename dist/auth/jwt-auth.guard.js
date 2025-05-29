@@ -13,6 +13,7 @@ exports.JwtAuthGuard = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@nestjs/core");
 const jwt_1 = require("@nestjs/jwt");
+const public_decorator_1 = require("./public.decorator");
 let JwtAuthGuard = class JwtAuthGuard {
     reflector;
     jwtService;
@@ -21,9 +22,19 @@ let JwtAuthGuard = class JwtAuthGuard {
         this.jwtService = jwtService;
     }
     async canActivate(ctx) {
-        const isPublic = this.reflector.get('isPublic', ctx.getHandler());
-        if (isPublic)
+        const request = ctx.switchToHttp().getRequest();
+        const path = request.url;
+        console.log(`[JwtAuthGuard Debug] Request path: ${path}`);
+        if (path === '/api/health') {
+            console.log(`[JwtAuthGuard Debug] Skipping auth for health check path: ${path}`);
             return true;
+        }
+        const isPublic = this.reflector.get(public_decorator_1.IS_PUBLIC_KEY, ctx.getHandler());
+        console.log(`[JwtAuthGuard Debug] Request to ${ctx.getHandler().name} isPublic: ${isPublic}`);
+        if (isPublic) {
+            console.log(`[JwtAuthGuard Debug] Skipping auth for public route (decorator): ${ctx.getHandler().name}`);
+            return true;
+        }
         const req = ctx.switchToHttp().getRequest();
         const cookies = req.cookies || {};
         const authHeader = req.headers.authorization;
@@ -38,14 +49,17 @@ let JwtAuthGuard = class JwtAuthGuard {
             }
         }
         if (!token) {
+            console.log(`[JwtAuthGuard Debug] No token found for non-public route: ${ctx.getHandler().name}`);
             throw new common_1.UnauthorizedException('No authentication token');
         }
         try {
             const payload = this.jwtService.verify(token);
             req.user = payload;
+            console.log(`[JwtAuthGuard Debug] Token verified for ${ctx.getHandler().name}`);
             return true;
         }
         catch (err) {
+            console.error(`[JwtAuthGuard Debug] Token verification failed for ${ctx.getHandler().name}: ${err.message}`);
             throw new common_1.UnauthorizedException('Invalid or expired token');
         }
     }

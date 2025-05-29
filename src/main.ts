@@ -29,9 +29,9 @@ async function bootstrap() {
   // Serve static assets
   app.useStaticAssets(join(__dirname, '..', 'public'));
 
-  // Enable CORS
+  // Enable CORS - Explicitly allow Netlify domain
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: [process.env.CORS_ORIGIN || 'http://localhost:3000', 'https://wearenewstalgiaa.netlify.app'], // Added Netlify domain
     credentials: true,
   });
 
