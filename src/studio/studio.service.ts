@@ -7,14 +7,17 @@ import { UpdateStudioDto } from './dto/update-studio.dto';
 
 @Injectable()
 export class StudioService {
-  constructor() {
-    console.log('StudioService constructor called');
-  }
+  private readonly prisma: PrismaClient;
 
-  private readonly prisma = new PrismaClient();
+  constructor() {
+    console.log('StudioService constructor called - BEFORE PrismaClient initialization');
+    this.prisma = new PrismaClient();
+    console.log('StudioService constructor called - AFTER PrismaClient initialization');
+  }
 
   // Fetch all studios
   async findAll(): Promise<any[]> {
+    console.log('StudioService.findAll() called');
     try {
       console.log('Attempting to fetch studios from database...');
       const studios = await this.prisma.studio.findMany();
