@@ -21,6 +21,7 @@ export class AppController {
   @Get('api/health')
   @Public()
   healthCheck() {
+    // Simple health check endpoint
     return { status: 'ok', timestamp: new Date().toISOString() };
   }
 }
