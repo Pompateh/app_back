@@ -4,7 +4,7 @@ import { CreateStudioDto } from './dto/create-studio.dto';
 import { UpdateStudioDto } from './dto/update-studio.dto';
 import { Public } from '../auth/public.decorator';
 
-@Controller('studios')
+@Controller('api/studios')
 export class StudioController {
   constructor(private readonly studioService: StudioService) {}
 

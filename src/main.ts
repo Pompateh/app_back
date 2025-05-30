@@ -33,11 +33,12 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       process.env.CORS_ORIGIN || 'http://localhost:3000',
-      'https://wearenewstalgiaa.netlify.app'
+      'https://wearenewstalgiaa.netlify.app',
+      'https://app-back-gc64.onrender.com'
     ],
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
   });
 
   // Global pipes
