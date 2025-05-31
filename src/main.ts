@@ -27,8 +27,7 @@ async function bootstrap() {
   console.log(`DATABASE_URL from process.env: ${process.env.DATABASE_URL}`);
 
   // Serve static assets
-  const staticAssetsPath = join(__dirname, '..' , 'uploads');
-  console.log(`Serving static assets from: ${staticAssetsPath}`);
+  const staticAssetsPath = '/app/uploads';
   app.useStaticAssets(staticAssetsPath, {
     prefix: '/uploads/',
     setHeaders: (res) => {
