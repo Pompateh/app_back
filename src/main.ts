@@ -31,6 +31,16 @@ async function bootstrap() {
   const uploadsDirExists = fs.existsSync('/app/uploads');
   console.log(`[DEBUG] /app/uploads directory exists: ${uploadsDirExists}`);
 
+  // If the directory exists, list its contents
+  if (uploadsDirExists) {
+    try {
+      const files = fs.readdirSync('/app/uploads');
+      console.log(`[DEBUG] Contents of /app/uploads: ${files.join(', ')}`);
+    } catch (error) {
+      console.error(`[DEBUG] Error listing contents of /app/uploads: ${error.message}`);
+    }
+  }
+
   // Serve static assets
   const staticAssetsPath = '/app/uploads';
   app.useStaticAssets(staticAssetsPath, {
