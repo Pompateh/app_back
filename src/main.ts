@@ -14,6 +14,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import * as fs from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -25,6 +26,10 @@ async function bootstrap() {
   const dbUrl = configService.get<string>('DATABASE_URL');
   console.log(`DATABASE_URL from ConfigService: ${dbUrl}`);
   console.log(`DATABASE_URL from process.env: ${process.env.DATABASE_URL}`);
+
+  // Check if the uploads directory exists
+  const uploadsDirExists = fs.existsSync('/app/uploads');
+  console.log(`[DEBUG] /app/uploads directory exists: ${uploadsDirExists}`);
 
   // Serve static assets
   const staticAssetsPath = '/app/uploads';
