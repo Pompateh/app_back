@@ -9,12 +9,10 @@ const rateLimit = require('express-rate-limit');
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
 import { logger } from './common/logger/winston.logger';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import * as fs from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -27,36 +25,13 @@ async function bootstrap() {
   console.log(`DATABASE_URL from ConfigService: ${dbUrl}`);
   console.log(`DATABASE_URL from process.env: ${process.env.DATABASE_URL}`);
 
-  // Check if the uploads directory exists
-  const uploadsDirExists = fs.existsSync('/app/uploads');
-  console.log(`[DEBUG] /app/uploads directory exists: ${uploadsDirExists}`);
-
-  // If the directory exists, list its contents
-  if (uploadsDirExists) {
-    try {
-      const files = fs.readdirSync('/app/uploads');
-      console.log(`[DEBUG] Contents of /app/uploads: ${files.join(', ')}`);
-    } catch (error) {
-      console.error(`[DEBUG] Error listing contents of /app/uploads: ${error.message}`);
-    }
-  }
-
-  // Serve static assets
-  const staticAssetsPath = '/app/uploads';
-  app.useStaticAssets(staticAssetsPath, {
-    prefix: '/uploads/',
-    setHeaders: (res) => {
-      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
-      res.set('Access-Control-Allow-Origin', '*');
-    },
-  });
-
-  // Enable CORS - Explicitly allow Netlify domain
+  // Enable CORS - Explicitly allow Netlify domains and custom domain
   app.enableCors({
     origin: [
       process.env.CORS_ORIGIN || 'http://localhost:3000',
       'https://wearenewstalgiaa.netlify.app',
-      'https://app-back-gc64.onrender.com'
+      'https://app-back-gc64.onrender.com',
+      'https://wearenewstalgia.com'
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],

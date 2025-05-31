@@ -18,6 +18,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { PostModule } from './post/post.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { UploadController } from './upload/upload.controller';
 
 @Module({
   imports: [
@@ -66,7 +67,7 @@ import { AppService } from './app.service';
     NewsletterModule,
     UsersModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, UploadController],
   providers: [
     AppService,
     {

@@ -42,11 +42,9 @@ RUN npm install --production
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
 
-# Copy the uploads directory directly from the build context
-COPY ./uploads /app/uploads
-
-# Ensure read permissions for all users on the uploads directory and its contents
-RUN chmod -R +r /app/uploads
+# Create uploads directory and set permissions
+RUN mkdir -p /app/uploads && \
+    chmod -R 777 /app/uploads
 
 # Expose the port
 EXPOSE 3000
