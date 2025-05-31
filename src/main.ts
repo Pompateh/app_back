@@ -31,6 +31,10 @@ async function bootstrap() {
   console.log(`Serving static assets from: ${staticAssetsPath}`);
   app.useStaticAssets(staticAssetsPath, {
     prefix: '/uploads/',
+    setHeaders: (res) => {
+      res.set('Cross-Origin-Resource-Policy', 'cross-origin');
+      res.set('Access-Control-Allow-Origin', '*');
+    },
   });
 
   // Enable CORS - Explicitly allow Netlify domain
@@ -42,7 +46,8 @@ async function bootstrap() {
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'Range'],
+    exposedHeaders: ['Content-Range', 'X-Content-Range'],
   });
 
   // Global pipes
