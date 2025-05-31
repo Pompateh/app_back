@@ -3,12 +3,16 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ShopService } from './shop.service';
 import { ShopController } from './shop.controller';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    JwtModule.register({
-      secret: 'taodep123', // Replace with your actual secret key
-      signOptions: { expiresIn: '1h' }, // Optional: Configure token expiration
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET') || 'taodep123',
+        signOptions: { expiresIn: '60m' },
+      }),
     }),
   ],
   providers: [ShopService, JwtAuthGuard],
