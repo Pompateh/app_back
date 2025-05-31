@@ -7,15 +7,6 @@ import * as fs from 'fs';
 @Controller('upload')
 export class UploadController {
   private readonly logger = new Logger(UploadController.name);
-  private readonly uploadDir = join(__dirname, '..', '..', 'uploads');
-
-  constructor() {
-    // Ensure uploads directory exists
-    if (!fs.existsSync(this.uploadDir)) {
-      fs.mkdirSync(this.uploadDir, { recursive: true });
-      this.logger.log(`Created uploads directory at: ${this.uploadDir}`);
-    }
-  }
 
   @Post()
   @UseInterceptors(FileInterceptor('file', {
@@ -25,7 +16,8 @@ export class UploadController {
           callback(new Error('No file provided'), '');
           return;
         }
-        callback(null, this.uploadDir);
+        const uploadDir = join(__dirname, '..', '..', 'uploads');
+        callback(null, uploadDir);
       },
       filename: (req, file, callback) => {
         if (!file) {
@@ -60,3 +52,32 @@ export class UploadController {
     }
   }
 }
+
+// Define the upload directory path
+const uploadDir = join(__dirname, '..', '..', 'uploads');
+
+// Ensure the upload directory exists
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+  new Logger('UploadController').log(`Created uploads directory at: ${uploadDir}`);
+}
+
+// Multer storage configuration
+const storageOptions = diskStorage({
+  destination: (req, file, callback) => {
+    if (!file) {
+      callback(new Error('No file provided'), '');
+      return;
+    }
+    callback(null, uploadDir);
+  },
+  filename: (req, file, callback) => {
+    if (!file) {
+      callback(new Error('No file provided'), '');
+      return;
+    }
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const ext = extname(file.originalname);
+    callback(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
+  },
+});
