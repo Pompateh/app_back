@@ -45,6 +45,9 @@ COPY --from=builder /app/dist ./dist
 # Copy the uploads directory from the builder stage
 COPY --from=builder /app/uploads ./uploads
 
+# Ensure read permissions for all users on the uploads directory and its contents
+RUN chmod -R +r /app/uploads
+
 # Expose the port
 EXPOSE 3000
 
