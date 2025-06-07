@@ -16,6 +16,7 @@ export class LoginDto {
   password: string;
 }
 
+
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -56,16 +57,3 @@ export class AuthController {
   async validateToken(@Req() req: Request) {
     const cookies = req.cookies || {};
     const token = cookies.token;
-
-    if (!token) {
-      throw new UnauthorizedException('No token provided');
-    }
-
-    try {
-      const payload = this.jwtService.verify(token);
-      return { valid: true, user: payload };
-    } catch (error) {
-      throw new UnauthorizedException('Invalid token');
-    }
-  }
-}
