@@ -36,12 +36,13 @@ export class AuthController {
     const result = await this.authService.login(loginDto);
     console.log('Login service result:', result); // Debug log
     
-    // Set the cookie
+    // Set the cookie with proper cross-domain settings
     res.cookie('token', result.token, {
       httpOnly: false, // Allow JavaScript access
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: true,
+      sameSite: 'none',
       path: '/',
+      domain: '.onrender.com',
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     });
     
