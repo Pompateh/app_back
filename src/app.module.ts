@@ -19,6 +19,7 @@ import { PostModule } from './post/post.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UploadController } from './upload/upload.controller';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { UploadController } from './upload/upload.controller';
     OrderModule,
     NewsletterModule,
     UsersModule,
+    AdminModule,
   ],
   controllers: [AppController, UploadController],
   providers: [
