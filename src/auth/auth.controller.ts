@@ -53,22 +53,23 @@ export class AuthController {
   @Get('validate')
   async validateToken(@Req() req: Request) {
     console.log('Validate token request received');
+    console.log('Request headers:', req.headers);
     console.log('Cookies:', req.cookies);
     
     const token = req.cookies.token;
     if (!token) {
       console.log('No token found in cookies');
-      throw new UnauthorizedException('No token provided');
+      return { valid: false, message: 'No token provided' };
     }
     
     console.log('Token found, validating...');
     try {
       const result = await this.authService.validateToken(token);
       console.log('Token validation result:', result);
-      return result;
+      return { valid: true, user: result };
     } catch (error) {
       console.error('Token validation error:', error);
-      throw new UnauthorizedException('Invalid token');
+      return { valid: false, message: 'Invalid token' };
     }
   }
 

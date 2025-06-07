@@ -3,14 +3,18 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 const cookieExtractor = (req: any): string | null => {
+  console.log('Extracting token from cookies:', req?.cookies);
   if (req && req.cookies) {
     const token = req.cookies['token'];
     if (!token) {
-      throw new UnauthorizedException('No token found in cookies');
+      console.log('No token found in cookies');
+      return null;
     }
+    console.log('Token found in cookies');
     return token;
   }
-  throw new UnauthorizedException('No cookies found in request');
+  console.log('No cookies found in request');
+  return null;
 };
 
 @Injectable()
@@ -27,7 +31,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
+    console.log('Validating JWT payload:', payload);
     if (!payload.sub || !payload.email || !payload.role) {
+      console.error('Invalid token payload:', payload);
       throw new UnauthorizedException('Invalid token payload');
     }
     return { userId: payload.sub, email: payload.email, role: payload.role };
