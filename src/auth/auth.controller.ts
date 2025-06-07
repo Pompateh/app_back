@@ -33,10 +33,8 @@ export class AuthController {
   ) {
     console.log('Login request received:', loginDto); // Debug log
     const result = await this.authService.login(loginDto);
-    if (!result.token) {
-      console.error('Invalid credentials'); // Debug log
-      throw new UnauthorizedException('Invalid credentials');
-    }
+    
+    // Set the cookie
     res.cookie('token', result.token, {
       httpOnly: false, // Allow JavaScript access
       secure: process.env.NODE_ENV === 'production',
@@ -46,7 +44,7 @@ export class AuthController {
     });
     
     console.log('Login successful, token generated'); // Debug log
-    return { token: result.token, user: result.user }; // Return both token and user data
+    return result; // Return the service result directly
   }
 
   @Public()

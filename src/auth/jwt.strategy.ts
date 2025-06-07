@@ -1,33 +1,35 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 const cookieExtractor = (req: any): string | null => {
-    if (req && req.cookies) {
-      return req.cookies['token'] || null;
+  if (req && req.cookies) {
+    const token = req.cookies['token'];
+    if (!token) {
+      throw new UnauthorizedException('No token found in cookies');
     }
-    return null;
-  };
+    return token;
+  }
+  throw new UnauthorizedException('No cookies found in request');
+};
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
-      // Extract token from Authorization header as Bearer token
-      jwtFromRequest: ExtractJwt.fromExtractors([
-               cookieExtractor,
-               ExtractJwt.fromAuthHeaderAsBearerToken(),
-             ]),
-      // Do not ignore token expiration
+      jwtFromRequest: cookieExtractor,
       ignoreExpiration: false,
-      // Use a secret key from your environment variables (or a default value)
-      secretOrKey: process.env.JWT_SECRET || 'taodep123',
+      secretOrKey: process.env.JWT_SECRET || (() => {
+        console.error('JWT_SECRET environment variable is not set!');
+        throw new Error('JWT_SECRET environment variable is not set');
+      })(),
     });
   }
 
   async validate(payload: any) {
-    // The validate method is called after a token is verified.
-    // You can add additional validation logic here if needed.
+    if (!payload.sub || !payload.email || !payload.role) {
+      throw new UnauthorizedException('Invalid token payload');
+    }
     return { userId: payload.sub, email: payload.email, role: payload.role };
   }
 }
