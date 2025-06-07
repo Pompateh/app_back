@@ -56,15 +56,17 @@ export class AuthController {
   async validateToken(@Req() req: Request) {
     console.log('Validate token request received');
     console.log('Request headers:', req.headers);
-    console.log('Cookies:', req.cookies);
     
-    const token = req.cookies.token;
-    if (!token) {
-      console.log('No token found in cookies');
+    // Get token from Authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.log('No valid Authorization header found');
       return { valid: false, message: 'No token provided' };
     }
     
-    console.log('Token found, validating...');
+    const token = authHeader.split(' ')[1];
+    console.log('Token found in Authorization header, validating...');
+    
     try {
       // Use JwtService directly instead of going through the guard
       const decoded = this.jwtService.verify(token);
