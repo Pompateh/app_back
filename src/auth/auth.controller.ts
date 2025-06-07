@@ -27,17 +27,17 @@ export class AuthController {
 
   @Public() // Mark this route as public
   @Post('login')
-    async login(
-        @Body() loginDto: LoginDto,
-        @Res({ passthrough: true }) res: Response,
-      ) {
+  async login(
+    @Body() loginDto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     console.log('Login request received:', loginDto); // Debug log
-    const token = await this.authService.validateUser(loginDto.email, loginDto.password);
-    if (!token) {
+    const result = await this.authService.login(loginDto);
+    if (!result.token) {
       console.error('Invalid credentials'); // Debug log
       throw new UnauthorizedException('Invalid credentials');
     }
-    res.cookie('token', token, {
+    res.cookie('token', result.token, {
       httpOnly: false, // Allow JavaScript access
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -46,7 +46,7 @@ export class AuthController {
     });
     
     console.log('Login successful, token generated'); // Debug log
-    return { token }; // Match frontend expectation
+    return { token: result.token, user: result.user }; // Return both token and user data
   }
 
   @Public()
