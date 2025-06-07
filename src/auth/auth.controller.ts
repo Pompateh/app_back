@@ -33,6 +33,7 @@ export class AuthController {
   ) {
     console.log('Login request received:', loginDto); // Debug log
     const result = await this.authService.login(loginDto);
+    console.log('Login service result:', result); // Debug log
     
     // Set the cookie
     res.cookie('token', result.token, {
@@ -43,7 +44,8 @@ export class AuthController {
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     });
     
-    console.log('Login successful, token generated'); // Debug log
+    console.log('Login successful, token generated and cookie set'); // Debug log
+    console.log('Returning response:', result); // Debug log
     return result; // Return the service result directly
   }
 

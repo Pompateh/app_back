@@ -74,10 +74,6 @@ export class AuthService {
   
       console.log('User found:', user);
   
-      // Debugging: Log the password values
-      console.log('Plain text password:', loginDto.password);
-      console.log('Hashed password from database:', user.password);
-  
       // Compare passwords
       const isMatch = await bcrypt.compare(loginDto.password, user.password);
       if (!isMatch) {
@@ -90,8 +86,10 @@ export class AuthService {
       const token = this.jwtService.sign(payload);
   
       console.log('JWT issued for user:', user.id);
+      const response = { token, user: { id: user.id, email: user.email, role: user.role } };
+      console.log('Login service returning:', response);
   
-      return { token, user: { id: user.id, email: user.email, role: user.role } };
+      return response;
     } catch (error) {
       console.error('AuthService login error:', error.message, error.stack);
       throw new InternalServerErrorException('Failed to log in');
