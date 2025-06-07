@@ -38,7 +38,7 @@ export class AuthController {
       throw new UnauthorizedException('Invalid credentials');
     }
     res.cookie('token', token, {
-      httpOnly: true,
+      httpOnly: false, // Allow JavaScript access
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
@@ -46,7 +46,7 @@ export class AuthController {
     });
     
     console.log('Login successful, token generated'); // Debug log
-    return { accessToken: token };
+    return { token }; // Match frontend expectation
   }
 
   @Public()
