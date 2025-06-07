@@ -52,12 +52,24 @@ export class AuthController {
   @Public()
   @Get('validate')
   async validateToken(@Req() req: Request) {
+    console.log('Validate token request received');
+    console.log('Cookies:', req.cookies);
+    
     const token = req.cookies.token;
     if (!token) {
+      console.log('No token found in cookies');
       throw new UnauthorizedException('No token provided');
     }
     
-    return this.authService.validateToken(token);
+    console.log('Token found, validating...');
+    try {
+      const result = await this.authService.validateToken(token);
+      console.log('Token validation result:', result);
+      return result;
+    } catch (error) {
+      console.error('Token validation error:', error);
+      throw new UnauthorizedException('Invalid token');
+    }
   }
 
 }
