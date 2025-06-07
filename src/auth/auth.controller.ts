@@ -52,7 +52,12 @@ export class AuthController {
   @Public()
   @Get('validate')
   async validateToken(@Req() req: Request) {
-    // Implementation of validateToken method
+    const token = req.cookies.token;
+    if (!token) {
+      throw new UnauthorizedException('No token provided');
+    }
+    
+    return this.authService.validateToken(token);
   }
 
 }

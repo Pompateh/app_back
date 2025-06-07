@@ -97,4 +97,13 @@ export class AuthService {
       throw new InternalServerErrorException('Failed to log in');
     }
   }
+
+  async validateToken(token: string) {
+    try {
+      const decoded = this.jwtService.verify(token);
+      return { valid: true, user: decoded };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token');
+    }
+  }
 }
