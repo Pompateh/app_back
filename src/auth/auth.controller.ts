@@ -1,5 +1,5 @@
-import { Controller, Post, Body, UnauthorizedException, Res } from '@nestjs/common';
-import type { Response } from 'express';
+import { Controller, Post, Body, UnauthorizedException, Res, Get, Req } from '@nestjs/common';
+import type { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { Public } from './public.decorator';
 import { IsString, IsNotEmpty } from 'class-validator';
@@ -14,6 +14,7 @@ export class LoginDto {
   @IsNotEmpty()
   password: string;
 }
+
 
 @Controller('auth')
 export class AuthController {
@@ -46,6 +47,12 @@ export class AuthController {
     
     console.log('Login successful, token generated'); // Debug log
     return { accessToken: token };
+  }
+
+  @Public()
+  @Get('validate')
+  async validateToken(@Req() req: Request) {
+    // Implementation of validateToken method
   }
 
 }
