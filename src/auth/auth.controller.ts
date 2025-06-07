@@ -3,6 +3,7 @@ import type { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { Public } from './public.decorator';
 import { IsString, IsNotEmpty } from 'class-validator';
+import { JwtService } from '@nestjs/jwt';
 
 // Define LoginDto as a standalone class
 export class LoginDto {
@@ -18,7 +19,7 @@ export class LoginDto {
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService, private readonly jwtService: JwtService) {}
 
   @Post('register')
   async register(@Body() body: { email: string; password: string; role: string }) {
@@ -64,9 +65,10 @@ export class AuthController {
     
     console.log('Token found, validating...');
     try {
-      const result = await this.authService.validateToken(token);
-      console.log('Token validation result:', result);
-      return { valid: true, user: result };
+      // Use JwtService directly instead of going through the guard
+      const decoded = this.jwtService.verify(token);
+      console.log('Token validation result:', decoded);
+      return { valid: true, user: decoded };
     } catch (error) {
       console.error('Token validation error:', error);
       return { valid: false, message: 'Invalid token' };
