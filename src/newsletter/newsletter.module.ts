@@ -1,10 +1,17 @@
 import { Module } from '@nestjs/common';
 import { NewsletterController } from './newsletter.controller';
 import { NewsletterService } from './newsletter.service';
-import { AuthModule } from '../auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { getJwtConfig } from '../config/jwt.config';
 
 @Module({
-  imports: [AuthModule],
+  imports: [
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: getJwtConfig,
+    }),
+  ],
   controllers: [NewsletterController],
   providers: [NewsletterService],
 })
