@@ -1,45 +1,46 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Studio } from '../studios/schemas/studio.schema';
-import { Project } from '../projects/schemas/project.schema';
-import { Order } from '../orders/schemas/order.schema';
-import { User } from '../users/schemas/user.schema';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class AdminService {
-  constructor(
-    @InjectModel(Studio.name) private studioModel: Model<Studio>,
-    @InjectModel(Project.name) private projectModel: Model<Project>,
-    @InjectModel(Order.name) private orderModel: Model<Order>,
-    @InjectModel(User.name) private userModel: Model<User>,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async getDashboardStats() {
     try {
       // Get total counts
       const [totalStudios, totalProjects, totalOrders, totalUsers] = await Promise.all([
-        this.studioModel.countDocuments(),
-        this.projectModel.countDocuments(),
-        this.orderModel.countDocuments(),
-        this.userModel.countDocuments(),
+        this.prisma.studio.count(),
+        this.prisma.project.count(),
+        this.prisma.order.count(),
+        this.prisma.user.count(),
       ]);
 
-      // Get recent orders
-      const recentOrders = await this.orderModel
-        .find()
-        .sort({ createdAt: -1 })
-        .limit(5)
-        .populate('user', 'name email')
-        .lean();
+      // Get recent orders with user info
+      const recentOrders = await this.prisma.order.findMany({
+        take: 5,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
 
       // Get recent projects with studio info
-      const recentProjects = await this.projectModel
-        .find()
-        .sort({ createdAt: -1 })
-        .limit(5)
-        .populate('studio', 'name')
-        .lean();
+      const recentProjects = await this.prisma.project.findMany({
+        take: 5,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          studio: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      });
 
       return {
         totalStudios,
@@ -54,4 +55,6 @@ export class AdminService {
       throw error;
     }
   }
+
+  // Add your admin service methods here
 } 
