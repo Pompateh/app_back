@@ -26,6 +26,7 @@ model Studio {
   portfolio        Json?
   fonts            Json?
   artworks         Json?
+  projects         Project[]
 }
 
 model Post {
@@ -56,16 +57,18 @@ model Post {
 
 
 model Project {
-  id        String         @id @default(auto()) @map("_id") @db.ObjectId
-  title     String
-  slug      String         @unique
-  blocks    ContentBlock[]
-  thumbnail String?
-  category  String?
-  team      TeamMember[]
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @default(now()) @updatedAt
+  id          String         @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  slug        String         @unique
+  blocks      ContentBlock[]
+  thumbnail   String?
+  category    String?
+  team        TeamMember[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @default(now()) @updatedAt
   description String
+  studio      Studio         @relation(fields: [studioId], references: [id])
+  studioId    String         @db.ObjectId
 }
 
 enum BlockType {
@@ -155,7 +158,8 @@ model Order {
   status    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String  @db.ObjectId
 }
 
 model CartItem {
@@ -168,12 +172,13 @@ model CartItem {
 }
 
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  email     String   @unique
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  email     String    @unique
   password  String
   role      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  orders    Order[]
 }
 
 
