@@ -10,4 +10,8 @@ export class UpdateProjectDto extends PartialType(CreateProjectDto) {
     @IsOptional()
     @IsString()
     type?: string;
+
+    @IsOptional()
+    @IsString()
+    studioId?: string;
   }
