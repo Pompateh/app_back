@@ -71,7 +71,6 @@ export class AdminService {
           _count: {
             select: {
               projects: true,
-              fonts: true,
               artworks: true,
             },
           },
@@ -261,9 +260,7 @@ export class AdminService {
         data: {
           title: data.title,
           content: data.content,
-          author: {
-            connect: { id: data.authorId }
-          }
+          authorId: data.authorId
         },
       });
       return post;
@@ -280,9 +277,7 @@ export class AdminService {
         data: {
           title: data.title,
           content: data.content,
-          author: {
-            connect: { id: data.authorId }
-          }
+          authorId: data.authorId
         },
       });
       return post;

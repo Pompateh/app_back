@@ -40,6 +40,7 @@ export class OrderService {
         project: {
           connect: { id: createDto.projectId }
         },
+        customer: createDto.userId,
         total: createDto.total,
         status: createDto.status,
       },
@@ -90,6 +91,7 @@ export class OrderService {
         project: {
           connect: { id: projectId }
         },
+        customer: userId,
         total,
         status: 'pending', // or 'completed' if payment is processed immediately
       },
