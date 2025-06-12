@@ -60,6 +60,11 @@ export class ProjectService {
             id: dto.studioId
           }
         },
+        user: {
+          connect: {
+            id: dto.userId
+          }
+        },
         blocks: {
           create: dto.blocks.map((b) => ({
             type: b.type,
@@ -74,7 +79,7 @@ export class ProjectService {
           create: dto.team.map((m) => ({ name: m.name, role: m.role })),
         },
       },
-      include: { blocks: true, team: true, studio: true },
+      include: { blocks: true, team: true, studio: true, user: true },
     });
   }
 

@@ -67,6 +67,9 @@ export class CreateProjectDto {
   @IsString()
   studioId: string;
 
+  @IsString()
+  userId: string;
+
   @IsOptional()
   @IsString()
   category?: string;

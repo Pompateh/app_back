@@ -6,31 +6,62 @@ export class OrderService {
   private prisma = new PrismaClient();
 
   async findAll() {
-    return this.prisma.order.findMany();
+    return this.prisma.order.findMany({
+      include: {
+        project: true,
+        user: true
+      }
+    });
   }
 
   async findOne(id: string) {
-    return this.prisma.order.findUnique({ where: { id } });
+    return this.prisma.order.findUnique({ 
+      where: { id },
+      include: {
+        project: true,
+        user: true
+      }
+    });
   }
 
-  async create(createDto: { orderRef: string; userId: string; total: number; status: string }) {
+  async create(createDto: { 
+    orderRef: string; 
+    userId: string; 
+    projectId: string;
+    total: number; 
+    status: string 
+  }) {
     return this.prisma.order.create({
       data: {
         orderRef: createDto.orderRef,
-        userId: createDto.userId,
-        customer: createDto.userId, // Assuming 'customer' is the same as 'userId'. Adjust as needed.
+        user: {
+          connect: { id: createDto.userId }
+        },
+        project: {
+          connect: { id: createDto.projectId }
+        },
         total: createDto.total,
         status: createDto.status,
       },
+      include: {
+        project: true,
+        user: true
+      }
     });
   }
 
   async remove(id: string) {
-    return this.prisma.order.delete({ where: { id } });
+    return this.prisma.order.delete({ 
+      where: { id },
+      include: {
+        project: true,
+        user: true
+      }
+    });
   }
 
   // Checkout: Create an order from a user's cart items
-  async checkout(userId: string) {
+  async checkout(userId: string, projectId: string) {
     // Get the user's cart items (assuming you have a CartService or query directly)
     const cartItems = await this.prisma.cartItem.findMany({ where: { userId } });
     if (cartItems.length === 0) {
@@ -53,11 +84,19 @@ export class OrderService {
     const order = await this.prisma.order.create({
       data: {
         orderRef,
-        userId,
-        customer: userId, // Assuming 'customer' is the same as 'userId'. Adjust as needed.
+        user: {
+          connect: { id: userId }
+        },
+        project: {
+          connect: { id: projectId }
+        },
         total,
         status: 'pending', // or 'completed' if payment is processed immediately
       },
+      include: {
+        project: true,
+        user: true
+      }
     });
 
     // Clear the user's cart after creating the order

@@ -45,7 +45,7 @@ export class AdminService {
         totalUsers,
         recentOrders: recentOrders.map(order => ({
           id: order.id,
-          customerName: order.user.name,
+          customerName: order.user.email,
           date: order.createdAt.toISOString(),
           status: order.status,
         })),
@@ -53,7 +53,7 @@ export class AdminService {
           id: project.id,
           name: project.title,
           date: project.createdAt.toISOString(),
-          status: project.status,
+          status: project.status || 'active',
           studio: project.studio.name,
         })),
       };
@@ -70,7 +70,7 @@ export class AdminService {
         include: {
           _count: {
             select: {
-              portfolio: true,
+              projects: true,
               fonts: true,
               artworks: true,
             },
@@ -188,11 +188,16 @@ export class AdminService {
         data: {
           title: data.title,
           slug: data.slug,
+          description: data.description || '',
           category: data.category,
           thumbnail: data.thumbnail,
           content: data.content,
-          studioId: data.studioId,
-          userId: data.userId,
+          studio: {
+            connect: { id: data.studioId }
+          },
+          user: {
+            connect: { id: data.userId }
+          }
         },
       });
       return project;
@@ -255,10 +260,10 @@ export class AdminService {
       const post = await this.prisma.post.create({
         data: {
           title: data.title,
-          slug: data.slug,
           content: data.content,
-          thumbnail: data.thumbnail,
-          authorId: data.authorId,
+          author: {
+            connect: { id: data.authorId }
+          }
         },
       });
       return post;
@@ -274,10 +279,10 @@ export class AdminService {
         where: { id },
         data: {
           title: data.title,
-          slug: data.slug,
           content: data.content,
-          thumbnail: data.thumbnail,
-          authorId: data.authorId,
+          author: {
+            connect: { id: data.authorId }
+          }
         },
       });
       return post;
