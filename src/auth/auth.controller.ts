@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 export class LoginDto {
   @IsString()
   @IsNotEmpty()
-  email: string; // Change from username to email
+  username: string; // Changed from email to username
 
   @IsString()
   @IsNotEmpty()

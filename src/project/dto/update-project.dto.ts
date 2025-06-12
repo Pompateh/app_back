@@ -48,4 +48,4 @@ export class UpdateProjectDto extends PartialType(CreateProjectDto) {
     @ValidateNested({ each: true })
     @Type(() => TeamMemberDto)
     team?: TeamMemberDto[];
-}
+  }
