@@ -1,18 +1,22 @@
-import type { Response } from 'express';
+import type { Response, Request } from 'express';
 import { AuthService } from './auth.service';
+import { JwtService } from '@nestjs/jwt';
 export declare class LoginDto {
-    email: string;
+    username: string;
     password: string;
 }
 export declare class AuthController {
     private readonly authService;
-    constructor(authService: AuthService);
+    private readonly jwtService;
+    constructor(authService: AuthService, jwtService: JwtService);
     register(body: {
+        username: string;
         email: string;
         password: string;
         role: string;
     }): Promise<{
         user: {
+            username: string;
             email: string;
             password: string;
             role: string;
@@ -22,6 +26,20 @@ export declare class AuthController {
         };
     }>;
     login(loginDto: LoginDto, res: Response): Promise<{
-        accessToken: string;
+        token: string;
+        user: {
+            id: string;
+            username: string;
+            role: string;
+        };
+    }>;
+    validateToken(req: Request): Promise<{
+        valid: boolean;
+        message: string;
+        user?: undefined;
+    } | {
+        valid: boolean;
+        user: any;
+        message?: undefined;
     }>;
 }

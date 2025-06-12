@@ -12,15 +12,17 @@ const jwt_1 = require("@nestjs/jwt");
 const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
 const shop_service_1 = require("./shop.service");
 const shop_controller_1 = require("./shop.controller");
+const config_1 = require("@nestjs/config");
+const jwt_config_1 = require("../config/jwt.config");
 let ShopModule = class ShopModule {
 };
 exports.ShopModule = ShopModule;
 exports.ShopModule = ShopModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            jwt_1.JwtModule.register({
-                secret: 'taodep123',
-                signOptions: { expiresIn: '1h' },
+            jwt_1.JwtModule.registerAsync({
+                inject: [config_1.ConfigService],
+                useFactory: jwt_config_1.getJwtConfig,
             }),
         ],
         providers: [shop_service_1.ShopService, jwt_auth_guard_1.JwtAuthGuard],

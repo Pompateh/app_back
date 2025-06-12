@@ -14,23 +14,36 @@ const common_1 = require("@nestjs/common");
 const passport_1 = require("@nestjs/passport");
 const passport_jwt_1 = require("passport-jwt");
 const cookieExtractor = (req) => {
+    console.log('Extracting token from cookies:', req?.cookies);
     if (req && req.cookies) {
-        return req.cookies['token'] || null;
+        const token = req.cookies['token'];
+        if (!token) {
+            console.log('No token found in cookies');
+            return null;
+        }
+        console.log('Token found in cookies');
+        return token;
     }
+    console.log('No cookies found in request');
     return null;
 };
 let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy) {
     constructor() {
         super({
-            jwtFromRequest: passport_jwt_1.ExtractJwt.fromExtractors([
-                cookieExtractor,
-                passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
-            ]),
+            jwtFromRequest: cookieExtractor,
             ignoreExpiration: false,
-            secretOrKey: process.env.JWT_SECRET || 'taodep123',
+            secretOrKey: process.env.JWT_SECRET || (() => {
+                console.error('JWT_SECRET environment variable is not set!');
+                throw new Error('JWT_SECRET environment variable is not set');
+            })(),
         });
     }
     async validate(payload) {
+        console.log('Validating JWT payload:', payload);
+        if (!payload.sub || !payload.email || !payload.role) {
+            console.error('Invalid token payload:', payload);
+            throw new common_1.UnauthorizedException('Invalid token payload');
+        }
         return { userId: payload.sub, email: payload.email, role: payload.role };
     }
 };

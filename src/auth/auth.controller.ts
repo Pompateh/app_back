@@ -22,7 +22,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService, private readonly jwtService: JwtService) {}
 
   @Post('register')
-  async register(@Body() body: { email: string; password: string; role: string }) {
+  async register(@Body() body: { username: string; email: string; password: string; role: string }) {
     return this.authService.register(body);
   }
 

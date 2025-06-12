@@ -8,7 +8,7 @@ export class AuthService {
   private prisma = new PrismaClient();
 
   constructor(private readonly jwtService: JwtService) {}
-  async register({ email, password, role }: { email: string; password: string; role: string }) {
+  async register({ username, email, password, role }: { username: string; email: string; password: string; role: string }) {
     try {
       if (!password) {
         throw new Error('Password is required');
@@ -20,6 +20,7 @@ export class AuthService {
       // Save the user to the database
       const user = await this.prisma.user.create({
         data: {
+          username,
           email,
           password: hashedPassword,
           role,
@@ -33,42 +34,42 @@ export class AuthService {
     }
   }
 
-  async validateUser(email: string, password: string): Promise<string | null> {
-    console.log('Validating user:', { email, password }); // Log input
+  async validateUser(username: string, password: string): Promise<string | null> {
+    console.log('Validating user:', { username, password }); // Log input
   
-    // Find user by email
+    // Find user by username
     const user = await this.prisma.user.findUnique({
-      where: { email },
+      where: { username },
     });
   
     if (!user) {
-      console.error('User not found for email:', email);
+      console.error('User not found for username:', username);
       return null;
     }
   
     // Compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      console.error('Password mismatch for email:', email);
+      console.error('Password mismatch for username:', username);
       return null;
     }
   
     // Generate JWT
-    const payload = { sub: user.id, email: user.email, role: user.role };
+    const payload = { sub: user.id, username: user.username, role: user.role };
     return this.jwtService.sign(payload);
   }
 
-  async login(loginDto: { email: string; password: string }) {
+  async login(loginDto: { username: string; password: string }) {
     try {
-      console.log('Login attempt for:', loginDto.email);
+      console.log('Login attempt for:', loginDto.username);
   
-      // Find user by email
+      // Find user by username
       const user = await this.prisma.user.findUnique({
-        where: { email: loginDto.email },
+        where: { username: loginDto.username },
       });
   
       if (!user) {
-        console.error('User not found for email:', loginDto.email);
+        console.error('User not found for username:', loginDto.username);
         throw new UnauthorizedException('Invalid credentials');
       }
   
@@ -77,16 +78,16 @@ export class AuthService {
       // Compare passwords
       const isMatch = await bcrypt.compare(loginDto.password, user.password);
       if (!isMatch) {
-        console.error('Password mismatch for email:', loginDto.email);
+        console.error('Password mismatch for username:', loginDto.username);
         throw new UnauthorizedException('Invalid credentials');
       }
   
       // Generate JWT
-      const payload = { sub: user.id, email: user.email, role: user.role };
+      const payload = { sub: user.id, username: user.username, role: user.role };
       const token = this.jwtService.sign(payload);
   
       console.log('JWT issued for user:', user.id);
-      const response = { token, user: { id: user.id, email: user.email, role: user.role } };
+      const response = { token, user: { id: user.id, username: user.username, role: user.role } };
       console.log('Login service returning:', response);
   
       return response;

@@ -8,7 +8,6 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const http_exception_filter_1 = require("./common/filters/http-exception.filter");
 const winston_logger_1 = require("./common/logger/winston.logger");
-const path_1 = require("path");
 const jwt_auth_guard_1 = require("./auth/jwt-auth.guard");
 const core_2 = require("@nestjs/core");
 const jwt_1 = require("@nestjs/jwt");
@@ -21,15 +20,17 @@ async function bootstrap() {
     const dbUrl = configService.get('DATABASE_URL');
     console.log(`DATABASE_URL from ConfigService: ${dbUrl}`);
     console.log(`DATABASE_URL from process.env: ${process.env.DATABASE_URL}`);
-    app.useStaticAssets((0, path_1.join)(__dirname, '..', 'public'));
     app.enableCors({
         origin: [
             process.env.CORS_ORIGIN || 'http://localhost:3000',
-            'https://bucolic-profiterole-ad1c11.netlify.app'
+            'https://wearenewstalgiaa.netlify.app',
+            'https://app-back-gc64.onrender.com',
+            'https://wearenewstalgia.com'
         ],
         credentials: true,
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'Range', 'Cookie'],
+        exposedHeaders: ['Content-Range', 'X-Content-Range', 'Set-Cookie'],
     });
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,

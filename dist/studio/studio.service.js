@@ -22,7 +22,6 @@ let StudioService = class StudioService {
     }
     async findAll() {
         console.log('StudioService.findAll() called');
-        return [{ id: 'dummy-1', name: 'Dummy Studio', description: 'This is dummy data' }];
         try {
             console.log('Attempting to fetch studios from database...');
             const studios = await this.prisma.studio.findMany();

@@ -10,11 +10,20 @@ exports.ProjectModule = void 0;
 const common_1 = require("@nestjs/common");
 const project_controller_1 = require("./project.controller");
 const project_service_1 = require("./project.service");
+const jwt_1 = require("@nestjs/jwt");
+const config_1 = require("@nestjs/config");
+const jwt_config_1 = require("../config/jwt.config");
 let ProjectModule = class ProjectModule {
 };
 exports.ProjectModule = ProjectModule;
 exports.ProjectModule = ProjectModule = __decorate([
     (0, common_1.Module)({
+        imports: [
+            jwt_1.JwtModule.registerAsync({
+                inject: [config_1.ConfigService],
+                useFactory: jwt_config_1.getJwtConfig,
+            }),
+        ],
         controllers: [project_controller_1.ProjectController],
         providers: [project_service_1.ProjectService],
     })

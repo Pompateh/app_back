@@ -17,8 +17,9 @@ const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const public_decorator_1 = require("./public.decorator");
 const class_validator_1 = require("class-validator");
+const jwt_1 = require("@nestjs/jwt");
 class LoginDto {
-    email;
+    username;
     password;
 }
 exports.LoginDto = LoginDto;
@@ -26,7 +27,7 @@ __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], LoginDto.prototype, "email", void 0);
+], LoginDto.prototype, "username", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
@@ -34,28 +35,49 @@ __decorate([
 ], LoginDto.prototype, "password", void 0);
 let AuthController = class AuthController {
     authService;
-    constructor(authService) {
+    jwtService;
+    constructor(authService, jwtService) {
         this.authService = authService;
+        this.jwtService = jwtService;
     }
     async register(body) {
         return this.authService.register(body);
     }
     async login(loginDto, res) {
         console.log('Login request received:', loginDto);
-        const token = await this.authService.validateUser(loginDto.email, loginDto.password);
-        if (!token) {
-            console.error('Invalid credentials');
-            throw new common_1.UnauthorizedException('Invalid credentials');
-        }
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+        const result = await this.authService.login(loginDto);
+        console.log('Login service result:', result);
+        res.cookie('token', result.token, {
+            httpOnly: false,
+            secure: true,
+            sameSite: 'none',
             path: '/',
+            domain: '.onrender.com',
             maxAge: 1000 * 60 * 60 * 24,
         });
-        console.log('Login successful, token generated');
-        return { accessToken: token };
+        console.log('Login successful, token generated and cookie set');
+        console.log('Returning response:', result);
+        return result;
+    }
+    async validateToken(req) {
+        console.log('Validate token request received');
+        console.log('Request headers:', req.headers);
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            console.log('No valid Authorization header found');
+            return { valid: false, message: 'No token provided' };
+        }
+        const token = authHeader.split(' ')[1];
+        console.log('Token found in Authorization header, validating...');
+        try {
+            const decoded = this.jwtService.verify(token);
+            console.log('Token validation result:', decoded);
+            return { valid: true, user: decoded };
+        }
+        catch (error) {
+            console.error('Token validation error:', error);
+            return { valid: false, message: 'Invalid token' };
+        }
     }
 };
 exports.AuthController = AuthController;
@@ -75,8 +97,16 @@ __decorate([
     __metadata("design:paramtypes", [LoginDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "login", null);
+__decorate([
+    (0, public_decorator_1.Public)(),
+    (0, common_1.Get)('validate'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "validateToken", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
-    __metadata("design:paramtypes", [auth_service_1.AuthService])
+    __metadata("design:paramtypes", [auth_service_1.AuthService, jwt_1.JwtService])
 ], AuthController);
 //# sourceMappingURL=auth.controller.js.map

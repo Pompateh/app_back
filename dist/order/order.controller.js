@@ -33,8 +33,8 @@ let OrderController = class OrderController {
     async remove(id) {
         return this.orderService.remove(id);
     }
-    async checkout(userId) {
-        return this.orderService.checkout(userId);
+    async checkout(userId, projectId) {
+        return this.orderService.checkout(userId, projectId);
     }
 };
 exports.OrderController = OrderController;
@@ -66,10 +66,11 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrderController.prototype, "remove", null);
 __decorate([
-    (0, common_1.Post)('checkout/:userId'),
+    (0, common_1.Post)('checkout/:userId/:projectId'),
     __param(0, (0, common_1.Param)('userId')),
+    __param(1, (0, common_1.Param)('projectId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], OrderController.prototype, "checkout", null);
 exports.OrderController = OrderController = __decorate([

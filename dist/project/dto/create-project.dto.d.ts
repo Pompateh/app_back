@@ -22,6 +22,8 @@ export declare class CreateProjectDto {
     slug: string;
     type: string;
     description: string;
+    studioId: string;
+    userId: string;
     category?: string;
     thumbnail?: string;
     blocks: ContentBlockDto[];

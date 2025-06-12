@@ -4,32 +4,32 @@ export declare class CartService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
         quantity: number;
     }>;
     updateItem(itemId: string, quantity: number): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
         quantity: number;
     }>;
     removeItem(itemId: string): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
         quantity: number;
     }>;
     getCart(userId: string): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        productId: string;
         userId: string;
+        productId: string;
         quantity: number;
     }[]>;
     clearCart(userId: string): Promise<import(".prisma/client").Prisma.BatchPayload>;

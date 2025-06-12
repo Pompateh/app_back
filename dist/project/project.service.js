@@ -13,12 +13,12 @@ const slugify_1 = require("slugify");
 let ProjectService = class ProjectService {
     prisma = new client_1.PrismaClient();
     async findAll() {
-        return this.prisma.project.findMany({ include: { blocks: true, team: true } });
+        return this.prisma.project.findMany({ include: { blocks: true, team: true, studio: true } });
     }
     async findOne(id) {
         const project = await this.prisma.project.findUnique({
             where: { id },
-            include: { blocks: true, team: true },
+            include: { blocks: true, team: true, studio: true },
         });
         if (!project) {
             throw new common_1.NotFoundException(`Project with id ${id} not found`);
@@ -28,7 +28,7 @@ let ProjectService = class ProjectService {
     async findOneBySlug(slug) {
         const project = await this.prisma.project.findUnique({
             where: { slug },
-            include: { blocks: true, team: true },
+            include: { blocks: true, team: true, studio: true },
         });
         if (!project) {
             throw new common_1.NotFoundException(`Project with slug "${slug}" not found`);
@@ -44,6 +44,16 @@ let ProjectService = class ProjectService {
                 description: dto.description || '',
                 thumbnail: dto.thumbnail,
                 category: dto.category,
+                studio: {
+                    connect: {
+                        id: dto.studioId
+                    }
+                },
+                user: {
+                    connect: {
+                        id: dto.userId
+                    }
+                },
                 blocks: {
                     create: dto.blocks.map((b) => ({
                         type: b.type,
@@ -58,7 +68,7 @@ let ProjectService = class ProjectService {
                     create: dto.team.map((m) => ({ name: m.name, role: m.role })),
                 },
             },
-            include: { blocks: true, team: true },
+            include: { blocks: true, team: true, studio: true, user: true },
         });
     }
     async update(id, dto) {
@@ -73,6 +83,13 @@ let ProjectService = class ProjectService {
             data.thumbnail = dto.thumbnail;
         if (dto.category !== undefined)
             data.category = dto.category;
+        if (dto.studioId !== undefined) {
+            data.studio = {
+                connect: {
+                    id: dto.studioId
+                }
+            };
+        }
         if (dto.blocks) {
             data.blocks = {
                 deleteMany: { projectId: id },
@@ -96,12 +113,11 @@ let ProjectService = class ProjectService {
             return await this.prisma.project.update({
                 where: { id },
                 data,
-                include: { blocks: true, team: true },
+                include: { blocks: true, team: true, studio: true },
             });
         }
         catch (err) {
-            if (err instanceof client_1.Prisma.PrismaClientKnownRequestError &&
-                err.code === 'P2025') {
+            if (err.code === 'P2025') {
                 throw new common_1.NotFoundException(`Project with id ${id} not found`);
             }
             throw err;

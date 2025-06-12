@@ -10,13 +10,20 @@ exports.SettingModule = void 0;
 const common_1 = require("@nestjs/common");
 const setting_controller_1 = require("./setting.controller");
 const setting_service_1 = require("./setting.service");
-const auth_module_1 = require("../auth/auth.module");
+const jwt_1 = require("@nestjs/jwt");
+const config_1 = require("@nestjs/config");
+const jwt_config_1 = require("../config/jwt.config");
 let SettingModule = class SettingModule {
 };
 exports.SettingModule = SettingModule;
 exports.SettingModule = SettingModule = __decorate([
     (0, common_1.Module)({
-        imports: [auth_module_1.AuthModule],
+        imports: [
+            jwt_1.JwtModule.registerAsync({
+                inject: [config_1.ConfigService],
+                useFactory: jwt_config_1.getJwtConfig,
+            }),
+        ],
         controllers: [setting_controller_1.SettingController],
         providers: [setting_service_1.SettingService],
     })

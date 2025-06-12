@@ -17,6 +17,7 @@ let UserService = class UserService {
         const hashedPassword = await bcrypt.hash(createUserDto.password, this.saltRounds);
         const user = await this.prisma.user.create({
             data: {
+                username: 'default_username',
                 email: createUserDto.email,
                 password: hashedPassword,
                 role: createUserDto.role || 'user',

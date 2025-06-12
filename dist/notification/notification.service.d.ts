@@ -3,13 +3,13 @@ export declare class NotificationService {
     logNotification(message: string, userId?: string): Promise<{
         id: string;
         createdAt: Date;
-        userId: string | null;
         message: string;
+        userId: string | null;
     }>;
     getAll(): Promise<{
         id: string;
         createdAt: Date;
-        userId: string | null;
         message: string;
+        userId: string | null;
     }[]>;
 }

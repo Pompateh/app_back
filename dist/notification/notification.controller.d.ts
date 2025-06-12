@@ -5,7 +5,7 @@ export declare class NotificationController {
     getNotifications(): Promise<{
         id: string;
         createdAt: Date;
-        userId: string | null;
         message: string;
+        userId: string | null;
     }[]>;
 }

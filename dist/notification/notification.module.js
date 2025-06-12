@@ -10,13 +10,20 @@ exports.NotificationModule = void 0;
 const common_1 = require("@nestjs/common");
 const notification_controller_1 = require("./notification.controller");
 const notification_service_1 = require("./notification.service");
-const auth_module_1 = require("../auth/auth.module");
+const jwt_1 = require("@nestjs/jwt");
+const config_1 = require("@nestjs/config");
+const jwt_config_1 = require("../config/jwt.config");
 let NotificationModule = class NotificationModule {
 };
 exports.NotificationModule = NotificationModule;
 exports.NotificationModule = NotificationModule = __decorate([
     (0, common_1.Module)({
-        imports: [auth_module_1.AuthModule],
+        imports: [
+            jwt_1.JwtModule.registerAsync({
+                inject: [config_1.ConfigService],
+                useFactory: jwt_config_1.getJwtConfig,
+            }),
+        ],
         controllers: [notification_controller_1.NotificationController],
         providers: [notification_service_1.NotificationService],
     })

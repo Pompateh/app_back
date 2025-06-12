@@ -12,26 +12,52 @@ const client_1 = require("@prisma/client");
 let OrderService = class OrderService {
     prisma = new client_1.PrismaClient();
     async findAll() {
-        return this.prisma.order.findMany();
+        return this.prisma.order.findMany({
+            include: {
+                project: true,
+                user: true
+            }
+        });
     }
     async findOne(id) {
-        return this.prisma.order.findUnique({ where: { id } });
+        return this.prisma.order.findUnique({
+            where: { id },
+            include: {
+                project: true,
+                user: true
+            }
+        });
     }
     async create(createDto) {
         return this.prisma.order.create({
             data: {
                 orderRef: createDto.orderRef,
-                userId: createDto.userId,
+                user: {
+                    connect: { id: createDto.userId }
+                },
+                project: {
+                    connect: { id: createDto.projectId }
+                },
                 customer: createDto.userId,
                 total: createDto.total,
                 status: createDto.status,
             },
+            include: {
+                project: true,
+                user: true
+            }
         });
     }
     async remove(id) {
-        return this.prisma.order.delete({ where: { id } });
+        return this.prisma.order.delete({
+            where: { id },
+            include: {
+                project: true,
+                user: true
+            }
+        });
     }
-    async checkout(userId) {
+    async checkout(userId, projectId) {
         const cartItems = await this.prisma.cartItem.findMany({ where: { userId } });
         if (cartItems.length === 0) {
             throw new common_1.NotFoundException('Cart is empty');
@@ -47,11 +73,20 @@ let OrderService = class OrderService {
         const order = await this.prisma.order.create({
             data: {
                 orderRef,
-                userId,
+                user: {
+                    connect: { id: userId }
+                },
+                project: {
+                    connect: { id: projectId }
+                },
                 customer: userId,
                 total,
                 status: 'pending',
             },
+            include: {
+                project: true,
+                user: true
+            }
         });
         await this.prisma.cartItem.deleteMany({ where: { userId } });
         return order;

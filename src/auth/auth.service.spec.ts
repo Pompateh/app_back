@@ -30,9 +30,10 @@ describe('AuthService', () => {
     const fakeUser = { email: 'admin@example.com', password: hashedPassword, role: 'admin' };
     prisma.user.findUnique.mockResolvedValue(fakeUser);
 
-    const result = await service.login({ email: 'admin@example.com', password: 'password123' });
-    expect(result).toHaveProperty('user');
-    expect(result.user.email).toBe('admin@example.com');
+    const result = await service.login({ username: 'admin', password: 'password123' });
+    expect(result).toBeDefined();
+    expect(result.token).toBeDefined();
+    expect(result.user.username).toBe('admin');
   });
 
   it('should fail login with wrong password', async () => {
@@ -41,7 +42,7 @@ describe('AuthService', () => {
     prisma.user.findUnique.mockResolvedValue(fakeUser);
 
     await expect(
-      service.login({ email: 'admin@example.com', password: 'wrongpassword' }),
+      service.login({ username: 'admin', password: 'wrongpassword' }),
     ).rejects.toThrow('Invalid credentials');
   });
 
@@ -49,7 +50,7 @@ describe('AuthService', () => {
     prisma.user.findUnique.mockResolvedValue(null);
 
     await expect(
-      service.login({ email: 'nonexistent@example.com', password: 'password123' }),
+      service.login({ username: 'nonexistent', password: 'password123' }),
     ).rejects.toThrow('Invalid credentials');
   });
 });

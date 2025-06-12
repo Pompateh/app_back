@@ -20,7 +20,7 @@ let AuthService = class AuthService {
     constructor(jwtService) {
         this.jwtService = jwtService;
     }
-    async register({ email, password, role }) {
+    async register({ username, email, password, role }) {
         try {
             if (!password) {
                 throw new Error('Password is required');
@@ -28,6 +28,7 @@ let AuthService = class AuthService {
             const hashedPassword = await bcrypt.hash(password, 10);
             const user = await this.prisma.user.create({
                 data: {
+                    username,
                     email,
                     password: hashedPassword,
                     role,
@@ -40,49 +41,58 @@ let AuthService = class AuthService {
             throw new common_1.InternalServerErrorException('Failed to register user');
         }
     }
-    async validateUser(email, password) {
-        console.log('Validating user:', { email, password });
+    async validateUser(username, password) {
+        console.log('Validating user:', { username, password });
         const user = await this.prisma.user.findUnique({
-            where: { email },
+            where: { username },
         });
         if (!user) {
-            console.error('User not found for email:', email);
+            console.error('User not found for username:', username);
             return null;
         }
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            console.error('Password mismatch for email:', email);
+            console.error('Password mismatch for username:', username);
             return null;
         }
-        const payload = { sub: user.id, email: user.email, role: user.role };
+        const payload = { sub: user.id, username: user.username, role: user.role };
         return this.jwtService.sign(payload);
     }
     async login(loginDto) {
         try {
-            console.log('Login attempt for:', loginDto.email);
+            console.log('Login attempt for:', loginDto.username);
             const user = await this.prisma.user.findUnique({
-                where: { email: loginDto.email },
+                where: { username: loginDto.username },
             });
             if (!user) {
-                console.error('User not found for email:', loginDto.email);
+                console.error('User not found for username:', loginDto.username);
                 throw new common_1.UnauthorizedException('Invalid credentials');
             }
             console.log('User found:', user);
-            console.log('Plain text password:', loginDto.password);
-            console.log('Hashed password from database:', user.password);
             const isMatch = await bcrypt.compare(loginDto.password, user.password);
             if (!isMatch) {
-                console.error('Password mismatch for email:', loginDto.email);
+                console.error('Password mismatch for username:', loginDto.username);
                 throw new common_1.UnauthorizedException('Invalid credentials');
             }
-            const payload = { sub: user.id, email: user.email, role: user.role };
+            const payload = { sub: user.id, username: user.username, role: user.role };
             const token = this.jwtService.sign(payload);
             console.log('JWT issued for user:', user.id);
-            return { token, user: { id: user.id, email: user.email, role: user.role } };
+            const response = { token, user: { id: user.id, username: user.username, role: user.role } };
+            console.log('Login service returning:', response);
+            return response;
         }
         catch (error) {
             console.error('AuthService login error:', error.message, error.stack);
             throw new common_1.InternalServerErrorException('Failed to log in');
+        }
+    }
+    async validateToken(token) {
+        try {
+            const decoded = this.jwtService.verify(token);
+            return { valid: true, user: decoded };
+        }
+        catch (error) {
+            throw new common_1.UnauthorizedException('Invalid token');
         }
     }
 };

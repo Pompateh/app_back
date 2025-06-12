@@ -14,6 +14,7 @@ export declare class UserService {
         id: string;
     }>;
     findByEmail(email: string): Promise<{
+        username: string;
         email: string;
         password: string;
         role: string;

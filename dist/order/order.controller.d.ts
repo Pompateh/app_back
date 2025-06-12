@@ -2,59 +2,180 @@ import { OrderService } from './order.service';
 export declare class OrderController {
     private readonly orderService;
     constructor(orderService: OrderService);
-    findAll(): Promise<{
+    findAll(): Promise<({
+        user: {
+            username: string;
+            email: string;
+            password: string;
+            role: string;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+        };
+        project: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            title: string;
+            description: string;
+            thumbnail: string | null;
+            slug: string;
+            category: string | null;
+            content: string | null;
+            studioId: string;
+            userId: string;
+        };
+    } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
+        projectId: string;
         orderRef: string;
         customer: string;
         total: number;
         status: string;
-        userId: string;
-    }[]>;
-    findOne(id: string): Promise<{
+    })[]>;
+    findOne(id: string): Promise<({
+        user: {
+            username: string;
+            email: string;
+            password: string;
+            role: string;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+        };
+        project: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            title: string;
+            description: string;
+            thumbnail: string | null;
+            slug: string;
+            category: string | null;
+            content: string | null;
+            studioId: string;
+            userId: string;
+        };
+    } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
+        projectId: string;
         orderRef: string;
         customer: string;
         total: number;
         status: string;
-        userId: string;
-    } | null>;
+    }) | null>;
     create(createDto: {
         orderRef: string;
         userId: string;
+        projectId: string;
         total: number;
         status: string;
     }): Promise<{
+        user: {
+            username: string;
+            email: string;
+            password: string;
+            role: string;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+        };
+        project: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            title: string;
+            description: string;
+            thumbnail: string | null;
+            slug: string;
+            category: string | null;
+            content: string | null;
+            studioId: string;
+            userId: string;
+        };
+    } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
+        projectId: string;
         orderRef: string;
         customer: string;
         total: number;
         status: string;
-        userId: string;
     }>;
     remove(id: string): Promise<{
+        user: {
+            username: string;
+            email: string;
+            password: string;
+            role: string;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+        };
+        project: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            title: string;
+            description: string;
+            thumbnail: string | null;
+            slug: string;
+            category: string | null;
+            content: string | null;
+            studioId: string;
+            userId: string;
+        };
+    } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
+        projectId: string;
         orderRef: string;
         customer: string;
         total: number;
         status: string;
-        userId: string;
     }>;
-    checkout(userId: string): Promise<{
+    checkout(userId: string, projectId: string): Promise<{
+        user: {
+            username: string;
+            email: string;
+            password: string;
+            role: string;
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+        };
+        project: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            title: string;
+            description: string;
+            thumbnail: string | null;
+            slug: string;
+            category: string | null;
+            content: string | null;
+            studioId: string;
+            userId: string;
+        };
+    } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        userId: string;
+        projectId: string;
         orderRef: string;
         customer: string;
         total: number;
         status: string;
-        userId: string;
     }>;
 }
