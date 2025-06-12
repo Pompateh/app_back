@@ -53,7 +53,6 @@ export class AdminService {
           id: project.id,
           name: project.title,
           date: project.createdAt.toISOString(),
-          status: project.status || 'active',
           studio: project.studio.name,
         })),
       };
@@ -71,7 +70,6 @@ export class AdminService {
           _count: {
             select: {
               projects: true,
-              artworks: true,
             },
           },
         },
@@ -98,15 +96,9 @@ export class AdminService {
           openHours: data.openHours,
           navigation: data.navigation,
           slogan: data.slogan,
-          portfolio: {
-            create: data.portfolio,
-          },
-          fonts: {
-            create: data.fonts,
-          },
-          artworks: {
-            create: data.artworks,
-          },
+          portfolio: data.portfolio,
+          fonts: data.fonts,
+          artworks: data.artworks,
         },
       });
       return studio;
@@ -132,18 +124,9 @@ export class AdminService {
           openHours: data.openHours,
           navigation: data.navigation,
           slogan: data.slogan,
-          portfolio: {
-            deleteMany: {},
-            create: data.portfolio,
-          },
-          fonts: {
-            deleteMany: {},
-            create: data.fonts,
-          },
-          artworks: {
-            deleteMany: {},
-            create: data.artworks,
-          },
+          portfolio: data.portfolio,
+          fonts: data.fonts,
+          artworks: data.artworks,
         },
       });
       return studio;
@@ -192,10 +175,14 @@ export class AdminService {
           thumbnail: data.thumbnail,
           content: data.content,
           studio: {
-            connect: { id: data.studioId }
+            connect: {
+              id: data.studioId
+            }
           },
           user: {
-            connect: { id: data.userId }
+            connect: {
+              id: data.userId
+            }
           }
         },
       });
@@ -213,11 +200,20 @@ export class AdminService {
         data: {
           title: data.title,
           slug: data.slug,
+          description: data.description,
           category: data.category,
           thumbnail: data.thumbnail,
           content: data.content,
-          studioId: data.studioId,
-          userId: data.userId,
+          studio: {
+            connect: {
+              id: data.studioId
+            }
+          },
+          user: {
+            connect: {
+              id: data.userId
+            }
+          }
         },
       });
       return project;
@@ -242,11 +238,7 @@ export class AdminService {
   // Posts
   async getPosts() {
     try {
-      const posts = await this.prisma.post.findMany({
-        include: {
-          author: true,
-        },
-      });
+      const posts = await this.prisma.post.findMany();
       return posts;
     } catch (error) {
       console.error('Error fetching posts:', error);
@@ -259,8 +251,23 @@ export class AdminService {
       const post = await this.prisma.post.create({
         data: {
           title: data.title,
+          slug: data.slug,
           content: data.content,
-          authorId: data.authorId
+          summary: data.summary,
+          featuredImage: data.featuredImage,
+          published: data.published,
+          type: data.type,
+          authorName: data.authorName,
+          authorJobTitle: data.authorJobTitle,
+          postDate: data.postDate,
+          readingTime: data.readingTime,
+          contentSources: data.contentSources,
+          referencePicUrl: data.referencePicUrl,
+          referencePicName: data.referencePicName,
+          additionalContent: data.additionalContent,
+          quote: data.quote,
+          quoteAuthor: data.quoteAuthor,
+          thumbnail: data.thumbnail,
         },
       });
       return post;
@@ -276,8 +283,23 @@ export class AdminService {
         where: { id },
         data: {
           title: data.title,
+          slug: data.slug,
           content: data.content,
-          authorId: data.authorId
+          summary: data.summary,
+          featuredImage: data.featuredImage,
+          published: data.published,
+          type: data.type,
+          authorName: data.authorName,
+          authorJobTitle: data.authorJobTitle,
+          postDate: data.postDate,
+          readingTime: data.readingTime,
+          contentSources: data.contentSources,
+          referencePicUrl: data.referencePicUrl,
+          referencePicName: data.referencePicName,
+          additionalContent: data.additionalContent,
+          quote: data.quote,
+          quoteAuthor: data.quoteAuthor,
+          thumbnail: data.thumbnail,
         },
       });
       return post;
@@ -299,35 +321,27 @@ export class AdminService {
     }
   }
 
-  // File Upload
+  // File upload
   async uploadFile(file: Express.Multer.File) {
     try {
-      const uploadDir = join(process.cwd(), 'public', 'uploads');
+      const uploadDir = join(process.cwd(), 'uploads');
       const fileName = `${Date.now()}-${file.originalname}`;
       const filePath = join(uploadDir, fileName);
-      
       await writeFile(filePath, file.buffer);
-      
-      return {
-        url: `/uploads/${fileName}`,
-      };
+      return { url: `/uploads/${fileName}` };
     } catch (error) {
       console.error('Error uploading file:', error);
       throw new InternalServerErrorException('Failed to upload file');
     }
   }
 
-  // Other endpoints
+  // Orders
   async getOrders() {
     try {
       const orders = await this.prisma.order.findMany({
         include: {
           user: true,
-          project: {
-            include: {
-              studio: true,
-            },
-          },
+          project: true,
         },
       });
       return orders;
@@ -337,18 +351,10 @@ export class AdminService {
     }
   }
 
+  // Users
   async getUsers() {
     try {
-      const users = await this.prisma.user.findMany({
-        include: {
-          _count: {
-            select: {
-              orders: true,
-              projects: true,
-            },
-          },
-        },
-      });
+      const users = await this.prisma.user.findMany();
       return users;
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -356,6 +362,7 @@ export class AdminService {
     }
   }
 
+  // Newsletters
   async getNewsletters() {
     try {
       const newsletters = await this.prisma.newsletter.findMany();
